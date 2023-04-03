@@ -1,3 +1,5 @@
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/habi/BrukerSkyScanLogfileRuminator/HEAD?labpath=LogfileRuminator.ipynb)
+
 This repository contains a Jupyter notebook and some supporting files I reuse often.
 I work with tomographic data acquired with three different [Bruker SkyScan](https://www.bruker.com/en/products-and-solutions/preclinical-imaging/micro-ct.html) (1172, 1272 and 2214).
 Usually, I have to produce an overview of what was scanned, either for a publication, a report for a proprietary customer, or as an overview to keep track in for an internal project.
