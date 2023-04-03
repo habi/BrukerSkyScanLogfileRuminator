@@ -1,0 +1,10 @@
+name: calegari
+channels:
+  - conda-forge
+dependencies:
+  - jupyterlab
+  - pandas
+  - jupyterlab
+  - openpyxl
+  - tabulate
+  - tqdm
