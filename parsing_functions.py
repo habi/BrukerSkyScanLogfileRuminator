@@ -35,10 +35,12 @@ def scanner(logfile, verbose=False):
 def controlsoftware(logfile, verbose=False):
     with open(logfile, 'r') as f:
         for line in f:
-            if 'Software Version' in line:
+            if 'Software' in line and 'Version' in line:
                 if verbose:
                     print(line)
-                version = line.split('=')[1].strip()
+                # Sometimes it's 'Software Verion=Number'
+                # Sometimes it's 'Software=Version Number' (with a space in Number)
+                version = line.split('=')[1].strip().strip('Version ').replace(". ", ".")
     return(version)
 
 
@@ -104,7 +106,9 @@ def numproj(logfile, verbose=False):
     """How many projections are recorded?"""
     with open(logfile, 'r') as f:
         for line in f:
-            if 'Number Of Files' in line:
+            # Sometimes it's 'Number of Files'
+            # Sometimes it's 'Number Of Files'
+            if 'Number' in line and 'f Files' in line:
                 if verbose:
                     print(line)
                 numproj = int(line.split('=')[1])
@@ -115,9 +119,11 @@ def projectionsize(logfile):
     """How big did we set the camera?"""
     with open(logfile, 'r') as f:
         for line in f:
-            if 'Number Of Rows' in line:
+            # Sometimes it's 'Number of'
+            # Sometimes it's 'Number Of'
+            if 'Number' in line and 'f Rows' in line:
                 y = int(line.split('=')[1])
-            if 'Number Of Columns' in line:
+            if 'Number' in line and 'f Columns' in line:
                 x = int(line.split('=')[1])
     return(x, y)
 
@@ -148,7 +154,6 @@ def pixelsize(logfile, verbose=False, rounded=False):
 
 def stacks(logfile, verbose=False):
     with open(logfile, 'r') as f:
-        # If only one stack, then there's nothing in the log file
         numstacks = 0
         for line in f:
             if 'b-scan' in line:
@@ -159,15 +164,16 @@ def stacks(logfile, verbose=False):
                 # since Bruker also starts to count at zero
                 numstacks = int(line.split('[')[1].split(']')[0])
             else:
-                # Nothing about substacks in the log file
+                # If only one stack, then there's nothing in the log file
                 numstacks = 0
     return(numstacks + 1)
 
 
 def overlapscan(logfile, verbose=False):
+    wide = None
     with open(logfile, 'r') as f:
         for line in f:
-            if 'Horizontal Off' in line:
+            if 'orizontal' in line and 'ffset' in line and 'osition' in line:
                 if verbose:
                     print(line)
                 wide = int(line.split('=')[1])
