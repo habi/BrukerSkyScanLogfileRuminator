@@ -147,7 +147,7 @@ def pixelsize(logfile, verbose=False, rounded=False):
                     print(line)
                 pixelsize = float(line.split('=')[1])
     if rounded:
-        return(round(pixelsize, 1))
+        return(round(pixelsize, 2))
     else:
         return(pixelsize)
 
