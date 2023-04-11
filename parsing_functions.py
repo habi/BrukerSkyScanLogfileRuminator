@@ -1,5 +1,6 @@
 import re
 import datetime
+import pandas
 
 
 # Convenience functions
@@ -251,6 +252,27 @@ def duration(logfile, verbose=False):
     else:
         scantime = datetime.datetime.strptime(duration, '%H:%M:%S')
     return((scantime-datetime.datetime(1900, 1, 1)).total_seconds())
+
+
+def scandate(logfile, verbose=False):
+    """When did we scan the Sample?"""
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Study Date and Time' in line:
+                if verbose:
+                    print('Found "date" line: %s' % line.strip())
+                datestring = line.split('=')[1].strip().replace('  ', ' ')
+                if verbose:
+                    print('The date string is: %s' % datestring)
+                try:
+                    # Try to read explicitly
+                    date = pandas.to_datetime(datestring, format='%d %b %Y %Hh:%Mm:%Ss')
+                except ValueError:
+                    # If it doesn't work, we try to figure out the date string automatically
+                    date = pandas.to_datetime(datestring)
+                if verbose:
+                    print('Parsed to: %s' % date)
+    return(date)
 
 
 # How did we reconstruct the samples?
