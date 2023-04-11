@@ -308,7 +308,7 @@ def ringremoval(logfile, verbose=False):
 
 def beamhardening(logfile, verbose=False):
     # Is only written to log files if reconstructed, thus set empty first
-    bh = None    
+    bh = None
     with open(logfile, 'r') as f:
         for line in f:
             if 'ardeni' in line:
@@ -316,3 +316,27 @@ def beamhardening(logfile, verbose=False):
                     print(line)
                 bh = int(line.split('=')[1].strip())
     return(bh)
+
+
+def defectpixelmasking(logfile, verbose=False):
+    """Check the 'defect pixel masking' setting"""
+    dpm = None
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'defect pixel mask' in line:
+                if verbose:
+                    print(line)
+                dpm = int(line.split('=')[1].strip())
+    return(dpm)
+
+
+def reconstruction_grayvalue(logfile, verbose=False):
+    grayvalue = None
+    """How did we map the brightness of the reconstructions?"""
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Maximum for' in line:
+                if verbose:
+                    print(line)                
+                grayvalue = float(line.split('=')[1])
+    return(grayvalue)
