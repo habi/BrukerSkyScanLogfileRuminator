@@ -1,4 +1,4 @@
-name: calegari
+name: logfiler
 channels:
   - conda-forge
 dependencies:
