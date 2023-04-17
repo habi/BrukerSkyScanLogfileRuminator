@@ -14,7 +14,7 @@ def fulllog(logfile):
 
 # How is the machine set up in general?
 def scanner(logfile, verbose=False):
-    hardwareversion = []
+    hardwareversion = False
     with open(logfile, 'r') as f:
         for line in f:
             if 'Scanner' in line:
@@ -116,7 +116,7 @@ def numproj(logfile, verbose=False):
     return(numproj)
 
 
-def projectionsize(logfile):
+def projection_size(logfile):
     """How big did we set the camera?"""
     with open(logfile, 'r') as f:
         for line in f:
@@ -165,13 +165,13 @@ def stacks(logfile, verbose=False):
                 # since Bruker also starts to count at zero
                 numstacks = int(line.split('[')[1].split(']')[0])
             else:
-                # If only one stack, then there's nothing in the log file
+                # If only one stack, then Bruker writes nothing to the log file
                 numstacks = 0
     return(numstacks + 1)
 
 
 def overlapscan(logfile, verbose=False):
-    wide = None
+    wide = False
     with open(logfile, 'r') as f:
         for line in f:
             if 'orizontal' in line and 'ffset' in line and 'osition' in line:
@@ -266,9 +266,10 @@ def scandate(logfile, verbose=False):
                     print('The date string is: %s' % datestring)
                 try:
                     # Try to read explicitly
-                    date = pandas.to_datetime(datestring, format='%d %b %Y %Hh:%Mm:%Ss')
+                    date = pandas.to_datetime(datestring,
+                                              format='%d %b %Y %Hh:%Mm:%Ss')
                 except ValueError:
-                    # If it doesn't work, we try to figure out the date string automatically
+                    # If we fail, try to figure it out automatically
                     date = pandas.to_datetime(datestring)
                 if verbose:
                     print('Parsed to: %s' % date)
@@ -287,7 +288,7 @@ def version(logfile, verbose=False):
                 if verbose:
                     print(line)
                 program = line.split('=')[1].strip()
-            if 'Program Version' in line:
+            elif 'Program Version' in line:
                 if verbose:
                     print(line)
                 version = line.split('sion:')[1].strip()
@@ -295,8 +296,9 @@ def version(logfile, verbose=False):
 
 
 def ringremoval(logfile, verbose=False):
+    """Did we use ring removal?"""
     # Is only written to log files if reconstructed, thus set empty first
-    ring = None
+    ring = False
     with open(logfile, 'r') as f:
         for line in f:
             if 'Ring' in line:
@@ -307,8 +309,9 @@ def ringremoval(logfile, verbose=False):
 
 
 def beamhardening(logfile, verbose=False):
+    """Did we set a beam hardening correction?"""
     # Is only written to log files if reconstructed, thus set empty first
-    bh = None
+    bh = False
     with open(logfile, 'r') as f:
         for line in f:
             if 'ardeni' in line:
@@ -320,7 +323,7 @@ def beamhardening(logfile, verbose=False):
 
 def defectpixelmasking(logfile, verbose=False):
     """Check the 'defect pixel masking' setting"""
-    dpm = None
+    dpm = False
     with open(logfile, 'r') as f:
         for line in f:
             if 'defect pixel mask' in line:
@@ -337,6 +340,61 @@ def reconstruction_grayvalue(logfile, verbose=False):
         for line in f:
             if 'Maximum for' in line:
                 if verbose:
-                    print(line)                
+                    print(line)
                 grayvalue = float(line.split('=')[1])
     return(grayvalue)
+
+
+def reconstruction_size(logfile, verbose=False):
+    x = None
+    y = None
+    """How large are the resulting reconstructions?"""
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Result' in line and 'Width' in line:
+                if verbose:
+                    print(line)
+                x = int(line.split('=')[1])
+            elif 'Result' in line and 'Height' in line:
+                if verbose:
+                    print(line)
+                y = int(line.split('=')[1])
+    return(x, y)
+
+
+def region_of_interest(logfile, verbose=False):
+    """
+    Did we reconstruct only ROI?
+    If yes, give out its top, bottom, right and left coordinates.
+    """
+    top = False
+    bottom = False
+    left = False
+    right = False
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Reconstruction from ROI' in line:
+                if verbose:
+                    print(line)
+                if line.split('=')[1].strip() == 'OFF':
+                    return(False)
+                else:
+                    pass
+            elif 'ROI' in line and 'Top' in line:
+                if verbose:
+                    print(line)
+                top = int(line.split('=')[1])
+            elif 'ROI' in line and 'Bottom' in line:
+                if verbose:
+                    print(line)
+                bottom = int(line.split('=')[1])
+            elif 'ROI' in line and 'Left' in line:
+                if verbose:
+                    print(line)
+                right = int(line.split('=')[1])
+            elif 'ROI' in line and 'Right' in line:
+                if verbose:
+                    print(line)
+                left = int(line.split('=')[1])
+                return(top, bottom, right, left)
+    return(False)
