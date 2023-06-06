@@ -42,7 +42,7 @@ def controlsoftware(logfile, verbose=False):
                 # Sometimes it's 'Software Verion=Number'
                 # Sometimes it's 'Software=Version Number' (with a space in Number)
                 version = line.split('=')[1].strip().strip('Version ').replace(". ", ".")
-    return(version)
+    return(str(version))
 
 
 def source(logfile, verbose=False):
