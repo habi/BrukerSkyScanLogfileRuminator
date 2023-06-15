@@ -190,7 +190,6 @@ def threesixtyscan(logfile, verbose=False):
                 if verbose:
                     print(line)
                 threesixty = line.split('=')[1]
-                print(threesixty)
                 if 'YES' in threesixty:
                     threesixty = True
                 elif 'NO' in threesixty:
