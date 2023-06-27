@@ -81,6 +81,16 @@ def current(logfile, verbose=False):
     return(A)
 
 
+def spotsize(logfile, verbose=False):
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Source spot size' in line:
+                if verbose:
+                    print(line)
+                spotsize = str(line.split('=')[1])
+    return(s)
+
+
 def whichfilter(logfile, verbose=False):
     with open(logfile, 'r') as f:
         for line in f:
