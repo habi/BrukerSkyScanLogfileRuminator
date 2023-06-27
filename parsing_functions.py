@@ -87,8 +87,8 @@ def spotsize(logfile, verbose=False):
             if 'Source spot size' in line:
                 if verbose:
                     print(line)
-                spotsize = str(line.split('=')[1])
-    return(s)
+                spotsize = line.split('=')[1].strip()
+    return(spotsize)
 
 
 def whichfilter(logfile, verbose=False):
