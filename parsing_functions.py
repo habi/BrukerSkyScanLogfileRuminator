@@ -87,8 +87,8 @@ def spotsize(logfile, verbose=False):
             if 'Source spot size' in line:
                 if verbose:
                     print(line)
-                spotsize = str(line.split('=')[1])
-    return(s)
+                spotsize = line.split('=')[1].strip()
+    return(spotsize)
 
 
 def whichfilter(logfile, verbose=False):
@@ -329,7 +329,6 @@ def beamhardening(logfile, verbose=False):
                 bh = int(line.split('=')[1].strip())
     return(bh)
 
-
 def defectpixelmasking(logfile, verbose=False):
     """Check the 'defect pixel masking' setting"""
     dpm = False
@@ -341,6 +340,30 @@ def defectpixelmasking(logfile, verbose=False):
                 dpm = int(line.split('=')[1].strip())
     return(dpm)
 
+def larger_than_fov(logfile, verbose=False):
+    """Did we set the 'object larger than field of view' option"""
+    ltfov = False
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Object Bigger' in line:
+                if verbose:
+                    print(line)
+                ltfov = line.split('=')[1].strip()
+    if ltfov == 'ON':
+        return(True)
+    elif ltfov == 'OFF':
+        return(False)
+
+def postalignment(logfile, verbose=False):
+    """Read the postalignment value"""
+    dpm = False
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'alignment=' in line:
+                if verbose:
+                    print(line)
+                pav = line.split('=')[1].strip()
+    return(pav)
 
 def reconstruction_grayvalue(logfile, verbose=False):
     grayvalue = None
