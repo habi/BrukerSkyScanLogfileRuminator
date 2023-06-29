@@ -285,8 +285,8 @@ def scandate(logfile, verbose=False):
     return(date)
 
 
-# How did we reconstruct the samples?
-def version(logfile, verbose=False):
+# How did we reconstruct the scan?
+def nreconversion(logfile, verbose=False):
     """Return reconstruction program an its version"""
     # Is only written to log files if reconstructed, thus set empty first
     program = None
