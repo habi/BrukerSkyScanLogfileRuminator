@@ -228,7 +228,7 @@ def averaging(logfile, verbose=False):
                     # https://stackoverflow.com/a/4894156/323100
                     avg = int(details[details.find("(") + 1:details.find(")")])
                 else:
-                    avg = False
+                     avg = None
     return(avg)
 
 
@@ -243,7 +243,7 @@ def randommovement(logfile, verbose=False):
                     # https://stackoverflow.com/a/4894156/323100
                     rndm = int(details[details.find("(") + 1:details.find(")")])
                 else:
-                    rndm = False
+                    rndm = None
     return(rndm)
 
 
@@ -307,37 +307,43 @@ def nreconversion(logfile, verbose=False):
 def ringremoval(logfile, verbose=False):
     """Did we use ring removal?"""
     # Is only written to log files if reconstructed, thus set empty first
-    ring = False
+    ring = None
     with open(logfile, 'r') as f:
         for line in f:
             if 'Ring' in line:
                 if verbose:
                     print(line)
                 ring = int(line.split('=')[1].strip())
+                if ring == 0:
+                    ring = None
     return(ring)
 
 
 def beamhardening(logfile, verbose=False):
     """Did we set a beam hardening correction?"""
     # Is only written to log files if reconstructed, thus set empty first
-    bh = False
+    bh = None
     with open(logfile, 'r') as f:
         for line in f:
             if 'ardeni' in line:
                 if verbose:
                     print(line)
                 bh = int(line.split('=')[1].strip())
+                if bh == 0:
+                    bh = None
     return(bh)
 
 def defectpixelmasking(logfile, verbose=False):
     """Check the 'defect pixel masking' setting"""
-    dpm = False
+    dpm = None
     with open(logfile, 'r') as f:
         for line in f:
             if 'defect pixel mask' in line:
                 if verbose:
                     print(line)
                 dpm = int(line.split('=')[1].strip())
+                if dpm == 0:
+                    dpm = None
     return(dpm)
 
 def larger_than_fov(logfile, verbose=False):
@@ -356,7 +362,7 @@ def larger_than_fov(logfile, verbose=False):
 
 def postalignment(logfile, verbose=False):
     """Read the postalignment value"""
-    dpm = False
+    pav = None
     with open(logfile, 'r') as f:
         for line in f:
             if 'alignment=' in line:
