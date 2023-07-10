@@ -207,7 +207,7 @@ def threesixtyscan(logfile, verbose=False):
     return(threesixty)
 
 
-def exposure(logfile, verbose=False):
+def exposuretime(logfile, verbose=False):
     with open(logfile, 'r') as f:
         for line in f:
             if 'Exposure' in line:
