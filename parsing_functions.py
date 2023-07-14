@@ -165,18 +165,16 @@ def pixelsize(logfile, verbose=False, rounded=False):
 
 def stacks(logfile, verbose=False):
     with open(logfile, 'r') as f:
+        # If only one stack, then Bruker writes nothing to the log file        
         numstacks = 0
-        for line in f:
-            if 'b-scan' in line:
+        for line in f:    
+            if 'Sub-scan scan length' in line:
                 if verbose:
                     print(line)
                 # The 'Sub-scan scan length' is listed in the log file
                 # We simply select the last one, and add 1,
                 # since Bruker also starts to count at zero
                 numstacks = int(line.split('[')[1].split(']')[0])
-            else:
-                # If only one stack, then Bruker writes nothing to the log file
-                numstacks = 0
     return(numstacks + 1)
 
 
