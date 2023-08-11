@@ -398,3 +398,16 @@ def region_of_interest(logfile, verbose=False):
                 left = int(line.split('=')[1])
                 return(top, bottom, right, left)
     return(False)
+
+def crosssection_rotation(logfile, verbose=False):
+    rotation = None
+    """
+    Did we rotate the reconstruction in a certain way?
+    What does 'CS' stand foSr BTW?"""
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'CS Static Rotation (deg)' in line:
+                if verbose:
+                    print(line)
+                rotation = float(line.split('=')[1])
+    return(rotation)
