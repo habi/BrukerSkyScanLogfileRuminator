@@ -42,7 +42,7 @@ def controlsoftware(logfile, verbose=False):
                 # Sometimes it's 'Software Verion=Number'
                 # Sometimes it's 'Software=Version Number' (with a space in Number)
                 version = line.split('=')[1].strip().strip('Version ').replace(". ", ".")
-    return(version)
+    return(str(version))
 
 
 def source(logfile, verbose=False):
@@ -79,6 +79,16 @@ def current(logfile, verbose=False):
                     print(line)
                 A = float(line.split('=')[1])
     return(A)
+
+
+def spotsize(logfile, verbose=False):
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Source spot size' in line:
+                if verbose:
+                    print(line)
+                spotsize = line.split('=')[1].strip()
+    return(spotsize)
 
 
 def whichfilter(logfile, verbose=False):
@@ -155,18 +165,16 @@ def pixelsize(logfile, verbose=False, rounded=False):
 
 def stacks(logfile, verbose=False):
     with open(logfile, 'r') as f:
+        # If only one stack, then Bruker writes nothing to the log file        
         numstacks = 0
-        for line in f:
-            if 'b-scan' in line:
+        for line in f:    
+            if 'Sub-scan scan length' in line:
                 if verbose:
                     print(line)
                 # The 'Sub-scan scan length' is listed in the log file
                 # We simply select the last one, and add 1,
                 # since Bruker also starts to count at zero
                 numstacks = int(line.split('[')[1].split(']')[0])
-            else:
-                # If only one stack, then Bruker writes nothing to the log file
-                numstacks = 0
     return(numstacks + 1)
 
 
@@ -190,7 +198,6 @@ def threesixtyscan(logfile, verbose=False):
                 if verbose:
                     print(line)
                 threesixty = line.split('=')[1]
-                print(threesixty)
                 if 'YES' in threesixty:
                     threesixty = True
                 elif 'NO' in threesixty:
@@ -198,7 +205,7 @@ def threesixtyscan(logfile, verbose=False):
     return(threesixty)
 
 
-def exposure(logfile, verbose=False):
+def exposuretime(logfile, verbose=False):
     with open(logfile, 'r') as f:
         for line in f:
             if 'Exposure' in line:
@@ -219,7 +226,7 @@ def averaging(logfile, verbose=False):
                     # https://stackoverflow.com/a/4894156/323100
                     avg = int(details[details.find("(") + 1:details.find(")")])
                 else:
-                    avg = False
+                     avg = None
     return(avg)
 
 
@@ -234,7 +241,7 @@ def randommovement(logfile, verbose=False):
                     # https://stackoverflow.com/a/4894156/323100
                     rndm = int(details[details.find("(") + 1:details.find(")")])
                 else:
-                    rndm = False
+                    rndm = None
     return(rndm)
 
 
@@ -276,8 +283,8 @@ def scandate(logfile, verbose=False):
     return(date)
 
 
-# How did we reconstruct the samples?
-def version(logfile, verbose=False):
+# How did we reconstruct the scan?
+def nreconversion(logfile, verbose=False):
     """Return reconstruction program an its version"""
     # Is only written to log files if reconstructed, thus set empty first
     program = None
@@ -298,40 +305,69 @@ def version(logfile, verbose=False):
 def ringremoval(logfile, verbose=False):
     """Did we use ring removal?"""
     # Is only written to log files if reconstructed, thus set empty first
-    ring = False
+    ring = None
     with open(logfile, 'r') as f:
         for line in f:
             if 'Ring' in line:
                 if verbose:
                     print(line)
                 ring = int(line.split('=')[1].strip())
+                if ring == 0:
+                    ring = None
     return(ring)
 
 
 def beamhardening(logfile, verbose=False):
     """Did we set a beam hardening correction?"""
     # Is only written to log files if reconstructed, thus set empty first
-    bh = False
+    bh = None
     with open(logfile, 'r') as f:
         for line in f:
             if 'ardeni' in line:
                 if verbose:
                     print(line)
                 bh = int(line.split('=')[1].strip())
+                if bh == 0:
+                    bh = None
     return(bh)
-
 
 def defectpixelmasking(logfile, verbose=False):
     """Check the 'defect pixel masking' setting"""
-    dpm = False
+    dpm = None
     with open(logfile, 'r') as f:
         for line in f:
             if 'defect pixel mask' in line:
                 if verbose:
                     print(line)
                 dpm = int(line.split('=')[1].strip())
+                if dpm == 0:
+                    dpm = None
     return(dpm)
 
+def larger_than_fov(logfile, verbose=False):
+    """Did we set the 'object larger than field of view' option"""
+    ltfov = False
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Object Bigger' in line:
+                if verbose:
+                    print(line)
+                ltfov = line.split('=')[1].strip()
+    if ltfov == 'ON':
+        return(True)
+    elif ltfov == 'OFF':
+        return(False)
+
+def postalignment(logfile, verbose=False):
+    """Read the postalignment value"""
+    pav = None
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'alignment=' in line:
+                if verbose:
+                    print(line)
+                pav = line.split('=')[1].strip()
+    return(pav)
 
 def reconstruction_grayvalue(logfile, verbose=False):
     grayvalue = None
