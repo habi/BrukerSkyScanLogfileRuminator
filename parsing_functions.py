@@ -14,6 +14,7 @@ def fulllog(logfile):
 
 # How is the machine set up in general?
 def scanner(logfile, verbose=False):
+    scanner = None
     hardwareversion = False
     with open(logfile, 'r') as f:
         for line in f:
