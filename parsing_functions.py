@@ -410,6 +410,30 @@ def reconstruction_rotation(logfile, verbose=False):
     return(rotation)    
 
 
+def section_first(logfile, verbose=False):
+    first = None
+    """What's the first slice?"""
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'First Section' in line:
+                if verbose:
+                    print(line)
+                first = int(line.split('=')[1])
+    return(first)
+
+
+def section_last(logfile, verbose=False):
+    last = None
+    """What's the last slice?"""
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Last Section' in line:
+                if verbose:
+                    print(line)
+                last = int(line.split('=')[1])
+    return(last)
+
+
 def region_of_interest(logfile, verbose=False):
     """
     Did we reconstruct only ROI?
