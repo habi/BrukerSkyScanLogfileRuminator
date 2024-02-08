@@ -397,6 +397,17 @@ def reconstruction_size(logfile, verbose=False):
                 y = int(line.split('=')[1])
     return(x, y)
 
+def reconstruction_rotation(logfile, verbose=False):
+    rotation = None
+    """How did we rotate the reconstructions? (NRecon "CS rotation (deg)" value)"""
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'CS Static Rotation' in line:
+                if verbose:
+                    print(line)
+                rotation = float(line.split('=')[1])
+    return(rotation)    
+
 
 def region_of_interest(logfile, verbose=False):
     """
