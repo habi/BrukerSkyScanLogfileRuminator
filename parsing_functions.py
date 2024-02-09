@@ -12,6 +12,14 @@ def fulllog(logfile):
     return()
 
 
+def timeformat(tdelta, fmt):
+    # From https://stackoverflow.com/a/8907269/323100
+    d = {"days": tdelta.days}
+    d["hours"], rem = divmod(tdelta.seconds, 3600)
+    d["minutes"], d["seconds"] = divmod(rem, 60)
+    return fmt.format(**d)
+
+
 # How is the machine set up in general?
 def scanner(logfile, verbose=False):
     scanner = None
