@@ -255,19 +255,32 @@ def randommovement(logfile, verbose=False):
 
 
 def duration(logfile, verbose=False):
-    '''Returns scantime in *seconds*'''
+    '''Returns scan duration in *seconds*'''
     with open(logfile, 'r') as f:
         for line in f:
             if 'Scan duration' in line and 'Estimated' not in line:
                 if verbose:
                     print(line)
-                duration = line.split('=')[1].strip()
+                duration_log = line.split('=')[1].strip()
     # Sometimes it's '00:24:26', sometimes '0h:52m:53s' :-/
-    if 'h' in duration:
-        scantime = datetime.datetime.strptime(duration, '%Hh:%Mm:%Ss')
+    if 'h' in duration_log:
+        # Thanks to ChatGPT for the help with Regex parsing and grouping
+        pattern = r"(?:(\d+)h)(?::?(\d+)m)(?::?(\d+)s)"
     else:
-        scantime = datetime.datetime.strptime(duration, '%H:%M:%S')
-    return((scantime-datetime.datetime(1900, 1, 1)).total_seconds())
+        pattern = r"(?:(\d+))(?::?(\d+))(?::?(\d+))"
+    # Matches are grouped; hours in group 1, minutes in group 2 and seconds in group 3
+    matches = re.match(pattern, duration_log)
+    # Create a timedelta object with relevant matches in relevant data
+    time_delta = datetime.timedelta(hours=int(matches.group(1)),
+                                    minutes=int(matches.group(2)),
+                                    seconds=int(matches.group(3)))
+    if verbose:
+        print(time_delta.total_seconds())
+    if not time_delta.total_seconds():
+        print('No time could be parsed from', logfile)
+        print('The string found was', duration_log)
+    # Return the scan time in seconds
+    return(time_delta.total_seconds())
 
 
 def scandate(logfile, verbose=False):
