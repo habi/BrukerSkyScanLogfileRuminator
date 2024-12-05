@@ -108,7 +108,7 @@ def whichfilter(logfile, verbose=False):
                     print(line)
                 fltr = line.split('=')[1].strip().replace('  ', ' ')
                 if fltr == 'No Filter':
-                    fltr = False
+                    fltr = None
     return(fltr)
 
 
