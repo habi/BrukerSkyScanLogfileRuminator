@@ -195,8 +195,6 @@ def overlapscan(logfile, verbose=False):
                 if verbose:
                     print(line)
                 wide = int(line.split('=')[1])
-                if wide == 1:
-                    wide = False
     return(wide)
 
 
