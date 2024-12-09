@@ -121,6 +121,14 @@ def camera(logfile, verbose=False):
                 cam = line.split('=')[1].strip().strip(' camera')
     return(cam)
 
+def cameraposition(logfile, verbose=False):
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Camera' in line and 'osition=' in line:
+                if verbose:
+                    print(line)
+                camposition = line.split('=')[1].strip()
+    return(camposition)
 
 def numproj(logfile, verbose=False):
     """How many projections are recorded?"""
