@@ -262,12 +262,25 @@ def duration(logfile, verbose=False):
                 if verbose:
                     print(line)
                 duration = line.split('=')[1].strip()
-    # Sometimes it's '00:24:26', sometimes '0h:52m:53s' :-/
-    if 'h' in duration:
-        scantime = datetime.datetime.strptime(duration, '%Hh:%Mm:%Ss')
+    # Sometimes the duration is given as '00:24:26', sometimes as '0h:52m:53s' :-/
+    # Since `timedelta` doesn't have a builtin way to construct timedeltas from strings [...] we have to build a parser: https://stackoverflow.com/a/18303358
+    # Doing so with a regex is easy, nonetheless we're thankful for the help of ChatGPT to construct us the regex
+    match_hms = re.match(r"(?:(\d+)h:)?(?:(\d+)m:)?(?:(\d+)s)?", duration)
+    match_colon = re.match(r"(?:(\d+):)?(\d+):(\d+)", duration)
+    if match_hms:
+        # Format like '0h:52m:53s'
+        hours = int(match_hms.group(1)) if match_hms.group(1) else 0
+        minutes = int(match_hms.group(2)) if match_hms.group(2) else 0
+        seconds = int(match_hms.group(3)) if match_hms.group(3) else 0
+    elif match_colon:
+        # Format like '00:24:26'
+        hours = int(match_colon.group(1)) if match_colon.group(1) else 0
+        minutes = int(match_colon.group(2))
+        seconds = int(match_colon.group(3))
     else:
-        scantime = datetime.datetime.strptime(duration, '%H:%M:%S')
-    return((scantime-datetime.datetime(1900, 1, 1)).total_seconds())
+        print(duration)
+        raise ValueError("Invalid duration format")
+    return int(datetime.timedelta(hours=hours, minutes=minutes, seconds=seconds).total_seconds())
 
 
 def scandate(logfile, verbose=False):
