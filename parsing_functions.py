@@ -108,7 +108,7 @@ def whichfilter(logfile, verbose=False):
                     print(line)
                 fltr = line.split('=')[1].strip().replace('  ', ' ')
                 if fltr == 'No Filter':
-                    fltr = False
+                    fltr = None
     return(fltr)
 
 
@@ -121,6 +121,14 @@ def camera(logfile, verbose=False):
                 cam = line.split('=')[1].strip().strip(' camera')
     return(cam)
 
+def cameraposition(logfile, verbose=False):
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Camera' in line and 'osition=' in line:
+                if verbose:
+                    print(line)
+                camposition = line.split('=')[1].strip()
+    return(camposition)
 
 def numproj(logfile, verbose=False):
     """How many projections are recorded?"""
@@ -255,32 +263,32 @@ def randommovement(logfile, verbose=False):
 
 
 def duration(logfile, verbose=False):
-    '''Returns scantime in *seconds*'''
+    '''Returns scan duration in *seconds*'''
     with open(logfile, 'r') as f:
         for line in f:
             if 'Scan duration' in line and 'Estimated' not in line:
                 if verbose:
                     print(line)
-                duration = line.split('=')[1].strip()
-    # Sometimes the duration is given as '00:24:26', sometimes as '0h:52m:53s' :-/
-    # Since `timedelta` doesn't have a builtin way to construct timedeltas from strings [...] we have to build a parser: https://stackoverflow.com/a/18303358
-    # Doing so with a regex is easy, nonetheless we're thankful for the help of ChatGPT to construct us the regex
-    match_hms = re.match(r"(?:(\d+)h:)?(?:(\d+)m:)?(?:(\d+)s)?", duration)
-    match_colon = re.match(r"(?:(\d+):)?(\d+):(\d+)", duration)
-    if match_hms:
-        # Format like '0h:52m:53s'
-        hours = int(match_hms.group(1)) if match_hms.group(1) else 0
-        minutes = int(match_hms.group(2)) if match_hms.group(2) else 0
-        seconds = int(match_hms.group(3)) if match_hms.group(3) else 0
-    elif match_colon:
-        # Format like '00:24:26'
-        hours = int(match_colon.group(1)) if match_colon.group(1) else 0
-        minutes = int(match_colon.group(2))
-        seconds = int(match_colon.group(3))
+                duration_log = line.split('=')[1].strip()
+    # Sometimes it's '00:24:26', sometimes '0h:52m:53s' :-/
+    if 'h' in duration_log:
+        # Thanks to ChatGPT for the help with Regex parsing and grouping
+        pattern = r"(?:(\d+)h)(?::?(\d+)m)(?::?(\d+)s)"
     else:
-        print(duration)
-        raise ValueError("Invalid duration format")
-    return int(datetime.timedelta(hours=hours, minutes=minutes, seconds=seconds).total_seconds())
+        pattern = r"(?:(\d+))(?::?(\d+))(?::?(\d+))"
+    # Matches are grouped; hours in group 1, minutes in group 2 and seconds in group 3
+    matches = re.match(pattern, duration_log)
+    # Create a timedelta object with relevant matches in relevant data
+    time_delta = datetime.timedelta(hours=int(matches.group(1)),
+                                    minutes=int(matches.group(2)),
+                                    seconds=int(matches.group(3)))
+    if verbose:
+        print(time_delta.total_seconds())
+    if not time_delta.total_seconds():
+        print('No time could be parsed from', logfile)
+        print('The string found was', duration_log)
+    # Return the scan time in seconds
+    return(time_delta.total_seconds())
 
 
 def scandate(logfile, verbose=False):
