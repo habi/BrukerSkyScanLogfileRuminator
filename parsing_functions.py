@@ -429,10 +429,10 @@ def reconstruction_size(logfile, verbose=False):
 
 def reconstruction_rotation(logfile, verbose=False):
     rotation = None
-    """How did we rotate the reconstructions? (NRecon "CS rotation (deg)" value)"""
+    """How did we rotate the reconstructions? (NRecons "CS Static Rotation (deg)" value)"""
     with open(logfile, 'r') as f:
         for line in f:
-            if 'CS Static Rotation' in line:
+            if 'CS Static Rotation Total' in line:
                 if verbose:
                     print(line)
                 rotation = float(line.split('=')[1])
