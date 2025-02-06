@@ -262,7 +262,7 @@ def randommovement(logfile, verbose=False):
     return(rndm)
 
 
-def duration(logfile, verbose=False):
+def duration(logfile, prose=False, verbose=False):
     '''Returns scan duration in *seconds*'''
     with open(logfile, 'r') as f:
         for line in f:
@@ -282,13 +282,21 @@ def duration(logfile, verbose=False):
     time_delta = datetime.timedelta(hours=int(matches.group(1)),
                                     minutes=int(matches.group(2)),
                                     seconds=int(matches.group(3)))
-    if verbose:
-        print(time_delta.total_seconds())
     if not time_delta.total_seconds():
         print('No time could be parsed from', logfile)
         print('The string found was', duration_log)
-    # Return the scan time in seconds
-    return(time_delta.total_seconds())
+    if prose:
+        if verbose:
+            print(time_delta)
+        # Return Timedelta object
+        # We can then split it with time_delta.components.hour, time_delta.components.minute, time_delta.components.seconds
+        # Hat tip to https://stackoverflow.com/a/71407740/323100
+        return(time_delta)
+    else:
+        if verbose:
+            print(time_delta.total_seconds)
+        # Return the scan time in seconds
+        return(time_delta.total_seconds)
 
 
 def scandate(logfile, verbose=False):
