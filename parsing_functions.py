@@ -294,9 +294,9 @@ def duration(logfile, prose=False, verbose=False):
         return(time_delta)
     else:
         if verbose:
-            print(time_delta.total_seconds)
+            print(time_delta.total_seconds())
         # Return the scan time in seconds
-        return(time_delta.total_seconds)
+        return(time_delta.total_seconds())
 
 
 def scandate(logfile, verbose=False):
