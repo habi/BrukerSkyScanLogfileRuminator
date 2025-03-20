@@ -195,7 +195,10 @@ def overlapscan(logfile, verbose=False):
                 if verbose:
                     print(line)
                 wide = int(line.split('=')[1])
-    return(wide)
+    if wide!=1:
+        return(wide)
+    else:
+        return(False)
 
 
 def threesixtyscan(logfile, verbose=False):
