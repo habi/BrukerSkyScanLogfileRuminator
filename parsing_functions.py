@@ -404,7 +404,7 @@ def postalignment(logfile, verbose=False):
             if 'post alignment' in line:
                 if verbose:
                     print(line)
-                pav = line.split('=')[1].strip()
+                pav = float(line.split('=')[1].strip())
     return(pav)
 
 def reconstruction_grayvalue(logfile, verbose=False):
