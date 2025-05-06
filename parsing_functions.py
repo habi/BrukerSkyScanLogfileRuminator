@@ -401,7 +401,7 @@ def postalignment(logfile, verbose=False):
     pav = None
     with open(logfile, 'r') as f:
         for line in f:
-            if 'alignment=' in line:
+            if 'post alignment' in line:
                 if verbose:
                     print(line)
                 pav = line.split('=')[1].strip()
