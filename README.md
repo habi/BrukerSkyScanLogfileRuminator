@@ -1,4 +1,5 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/habi/BrukerSkyScanLogfileRuminator/HEAD?labpath=LogfileRuminator.ipynb)
+[![DOI](https://zenodo.org/badge/622975902.svg)](https://doi.org/10.5281/zenodo.15607943)
 
 This repository contains a Jupyter notebook and some supporting files I reuse often.
 I work with tomographic data acquired with three different [Bruker SkyScan](https://www.bruker.com/en/products-and-solutions/preclinical-imaging/micro-ct.html) (1172, 1272 and 2214).
