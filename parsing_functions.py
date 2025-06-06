@@ -164,8 +164,8 @@ def numproj(logfile, verbose=False):
             if 'Number' in line and 'f Files' in line:
                 if verbose:
                     print(line)
-                numproj = int(line.split('=')[1])
-    return(numproj)
+                numberofprojections = int(line.split('=')[1])
+    return(numberofprojections)
 
 
 def projection_size(logfile):
