@@ -60,13 +60,13 @@ def source(logfile, verbose=False):
             if 'Source Type' in line:
                 if verbose:
                     print(line)
-                source = line.split('=')[1].strip()
-                if 'HAMAMA' in source:
+                whichsource = line.split('=')[1].strip()
+                if 'HAMAMA' in whichsource:
                     # Split the string at '_L' to separate HAMAMATSU_L118
                     # Then capitalize HAMAMATSU and join the strings back
                     # with ' L' to get the beginning of the reference back
-                    source = ' L'.join([s.capitalize() for s in source.split('_L')])
-    return(source)
+                    whichsource = ' L'.join([s.capitalize() for s in whichsource.split('_L')])
+    return(whichsource)
 
 
 # How did we set up the scan?
@@ -96,8 +96,8 @@ def spotsize(logfile, verbose=False):
             if 'Source spot size' in line:
                 if verbose:
                     print(line)
-                spotsize = line.split('=')[1].strip()
-    return(spotsize)
+                whichspotsize = line.split('=')[1].strip()
+    return(whichspotsize)
 
 
 def whichfilter(logfile, verbose=False):
