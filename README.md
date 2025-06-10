@@ -10,7 +10,7 @@ An example of such a table is shown in [ScanningDetails.csv](ScanningDetails.csv
 *Very* often, the code is adapted from what is shown here, but this is a common baseline I always use.
 The repository contains a `logfiles` subfolder with some examples of log files and is set up in a way that it can be run in Binder, just click the link button at the top.
 
-Usually, I just add the repository to my other repositories as submodule with 
+Usually, I just add the repository to my other repositories as a submodule with
 ````bash
 git submodule add https://github.com/habi/BrukerSkyScanLogfileRuminator
 ````
