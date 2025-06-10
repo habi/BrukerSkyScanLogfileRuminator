@@ -22,7 +22,7 @@ def timeformat(tdelta, fmt):
 
 # How is the machine set up in general?
 def scanner(logfile, verbose=False):
-    scanner = None
+    machine = None
     hardwareversion = False
     with open(logfile, 'r') as f:
         for line in f:
@@ -124,6 +124,7 @@ def camera(logfile, verbose=False):
 
 def numproj(logfile, verbose=False):
     """How many projections are recorded?"""
+    NumberOfProjections = None
     with open(logfile, 'r') as f:
         for line in f:
             # Sometimes it's 'Number of Files'
