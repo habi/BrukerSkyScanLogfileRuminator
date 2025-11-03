@@ -137,6 +137,24 @@ def cameraposition(logfile, verbose=False):
                 camposition = line.split('=')[1].strip()
     return(camposition)
 
+def distance_source_to_detector(logfile, verbose=False):
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Camera to Source' in line:
+                if verbose:
+                    print(line)
+                sdd = line.split('=')[1].strip()
+    return(sdd)
+
+def distance_source_to_sample(logfile, verbose=False):
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Object to Source' in line:
+                if verbose:
+                    print(line)
+                ssd = line.split('=')[1].strip()
+    return(ssd)
+
 def numproj(logfile, verbose=False):
     """How many projections are recorded?"""
     with open(logfile, 'r') as f:
