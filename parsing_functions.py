@@ -528,8 +528,8 @@ def slice_number(logfile, verbose=False):
 
 def region_of_interest(logfile, verbose=False):
     """
-    Did we reconstruct only ROI?
-    If yes, give out its top, bottom, right and left coordinates.
+    Did we reconstruct a ROI?
+    If yes, give out its top, bottom, left and right coordinates.
     """
     top = False
     bottom = False
@@ -555,10 +555,9 @@ def region_of_interest(logfile, verbose=False):
             elif 'ROI' in line and 'Left' in line:
                 if verbose:
                     print(line)
-                right = int(line.split('=')[1])
+                left = int(line.split('=')[1])
             elif 'ROI' in line and 'Right' in line:
                 if verbose:
                     print(line)
-                left = int(line.split('=')[1])
-                return (top, bottom, right, left)
-    return False
+                right = int(line.split('=')[1])
+    return (top, bottom, left, right)
