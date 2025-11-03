@@ -22,7 +22,7 @@ def timeformat(tdelta, fmt):
 
 # How is the machine set up in general?
 def scanner(logfile, verbose=False):
-    scanner = None
+    machine = None
     hardwareversion = False
     with open(logfile, 'r') as f:
         for line in f:
@@ -89,7 +89,6 @@ def current(logfile, verbose=False):
                 A = float(line.split('=')[1])
     return(A)
 
-
 def spotsize(logfile, verbose=False):
     with open(logfile, 'r') as f:
         for line in f:
@@ -99,6 +98,15 @@ def spotsize(logfile, verbose=False):
                 spotsize = line.split('=')[1].strip()
     return(spotsize)
 
+def beamposition(logfile, verbose=False):
+    position = None
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'Beam position' in line:
+                if verbose:
+                    print(line)
+                position = int(line.split('=')[1])
+    return(position)
 
 def whichfilter(logfile, verbose=False):
     with open(logfile, 'r') as f:
@@ -110,7 +118,6 @@ def whichfilter(logfile, verbose=False):
                 if fltr == 'No Filter':
                     fltr = None
     return(fltr)
-
 
 def camera(logfile, verbose=False):
     with open(logfile, 'r') as f:
