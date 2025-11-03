@@ -9,7 +9,7 @@ def fulllog(logfile):
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             print(line.strip())
-    return ()
+    return()
 
 
 def timeformat(tdelta, fmt):
@@ -37,9 +37,9 @@ def scanner(logfile, verbose=False):
                     print(line)
                 hardwareversion = line.split('=')[1].strip()
     if hardwareversion:
-        return 'SkyScan %s (Version %s)' % (machine, hardwareversion)
+        return('SkyScan %s (Version %s)' % (machine, hardwareversion))
     else:
-        return 'SkyScan ' + machine
+        return('SkyScan ' + machine)
 
 
 def controlsoftware(logfile, verbose=False):
@@ -50,10 +50,8 @@ def controlsoftware(logfile, verbose=False):
                     print(line)
                 # Sometimes it's 'Software Verion=Number'
                 # Sometimes it's 'Software=Version Number' (with a space in Number)
-                version = (
-                    line.split('=')[1].strip().strip('Version ').replace(". ", ".")
-                )
-    return str(version)
+                version = line.split('=')[1].strip().strip('Version ').replace(". ", ".")
+    return(str(version))
 
 
 def source(logfile, verbose=False):
@@ -67,10 +65,8 @@ def source(logfile, verbose=False):
                     # Split the string at '_L' to separate HAMAMATSU_L118
                     # Then capitalize HAMAMATSU and join the strings back
                     # with ' L' to get the beginning of the reference back
-                    whichsource = ' L'.join(
-                        [s.capitalize() for s in whichsource.split('_L')]
-                    )
-    return whichsource
+                    whichsource = ' L'.join([s.capitalize() for s in whichsource.split('_L')])
+    return(whichsource)
 
 
 # How did we set up the scan?
@@ -81,7 +77,7 @@ def voltage(logfile, verbose=False):
                 if verbose:
                     print(line)
                 V = float(line.split('=')[1])
-    return V
+    return(V)
 
 
 def current(logfile, verbose=False):
@@ -91,8 +87,7 @@ def current(logfile, verbose=False):
                 if verbose:
                     print(line)
                 A = float(line.split('=')[1])
-    return A
-
+    return(A)
 
 def spotsize(logfile, verbose=False):
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -101,8 +96,7 @@ def spotsize(logfile, verbose=False):
                 if verbose:
                     print(line)
                 whichspotsize = line.split('=')[1].strip()
-    return whichspotsize
-
+    return(whichspotsize)
 
 def beamposition(logfile, verbose=False):
     position = None
@@ -112,8 +106,7 @@ def beamposition(logfile, verbose=False):
                 if verbose:
                     print(line)
                 position = int(line.split('=')[1])
-    return position
-
+    return(position)
 
 def whichfilter(logfile, verbose=False):
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -124,8 +117,7 @@ def whichfilter(logfile, verbose=False):
                 fltr = line.split('=')[1].strip().replace('  ', ' ')
                 if fltr == 'No Filter':
                     fltr = None
-    return fltr
-
+    return(fltr)
 
 def camera(logfile, verbose=False):
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -134,8 +126,7 @@ def camera(logfile, verbose=False):
                 if verbose:
                     print(line)
                 cam = line.split('=')[1].strip().strip(' camera')
-    return cam
-
+    return(cam)
 
 def cameraposition(logfile, verbose=False):
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -144,8 +135,7 @@ def cameraposition(logfile, verbose=False):
                 if verbose:
                     print(line)
                 camposition = line.split('=')[1].strip()
-    return camposition
-
+    return(camposition)
 
 def distance_source_to_detector(logfile, verbose=False):
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -154,8 +144,7 @@ def distance_source_to_detector(logfile, verbose=False):
                 if verbose:
                     print(line)
                 sdd = line.split('=')[1].strip()
-    return sdd
-
+    return(sdd)
 
 def distance_source_to_sample(logfile, verbose=False):
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -164,8 +153,7 @@ def distance_source_to_sample(logfile, verbose=False):
                 if verbose:
                     print(line)
                 ssd = line.split('=')[1].strip()
-    return ssd
-
+    return(ssd)
 
 def numproj(logfile, verbose=False):
     """How many projections are recorded?"""
@@ -177,7 +165,7 @@ def numproj(logfile, verbose=False):
                 if verbose:
                     print(line)
                 numberofprojections = int(line.split('=')[1])
-    return numberofprojections
+    return(numberofprojections)
 
 
 def projection_size(logfile):
@@ -190,7 +178,7 @@ def projection_size(logfile):
                 y = int(line.split('=')[1])
             if 'Number' in line and 'f Columns' in line:
                 x = int(line.split('=')[1])
-    return (x, y)
+    return(x, y)
 
 
 def rotationstep(logfile, verbose=False):
@@ -200,7 +188,7 @@ def rotationstep(logfile, verbose=False):
                 if verbose:
                     print(line)
                 rotstep = float(line.split('=')[1])
-    return rotstep
+    return(rotstep)
 
 
 def pixelsize(logfile, verbose=False, rounded=False):
@@ -212,16 +200,16 @@ def pixelsize(logfile, verbose=False, rounded=False):
                     print(line)
                 pixelsize = float(line.split('=')[1])
     if rounded:
-        return round(pixelsize, 2)
+        return(round(pixelsize, 2))
     else:
-        return pixelsize
+        return(pixelsize)
 
 
 def stacks(logfile, verbose=False):
     with open(logfile, 'r', encoding='utf-8') as f:
-        # If only one stack, then Bruker writes nothing to the log file
+        # If only one stack, then Bruker writes nothing to the log file        
         numstacks = 0
-        for line in f:
+        for line in f:    
             if 'Sub-scan scan length' in line:
                 if verbose:
                     print(line)
@@ -229,7 +217,7 @@ def stacks(logfile, verbose=False):
                 # We simply select the last one, and add 1,
                 # since Bruker also starts to count at zero
                 numstacks = int(line.split('[')[1].split(']')[0])
-    return numstacks + 1
+    return(numstacks + 1)
 
 
 def overlapscan(logfile, verbose=False):
@@ -242,7 +230,7 @@ def overlapscan(logfile, verbose=False):
                 wide = int(line.split('=')[1])
                 if wide == 1:
                     wide = False
-    return wide
+    return(wide)
 
 
 def threesixtyscan(logfile, verbose=False):
@@ -256,7 +244,7 @@ def threesixtyscan(logfile, verbose=False):
                     threesixty = True
                 elif 'NO' in threesixty:
                     threesixty = False
-    return threesixty
+    return(threesixty)
 
 
 def exposuretime(logfile, verbose=False):
@@ -266,7 +254,7 @@ def exposuretime(logfile, verbose=False):
                 if verbose:
                     print(line)
                 exp = int(line.split('=')[1])
-    return exp
+    return(exp)
 
 
 def averaging(logfile, verbose=False):
@@ -278,10 +266,10 @@ def averaging(logfile, verbose=False):
                 details = line.split('=')[1]
                 if 'ON' in details:
                     # https://stackoverflow.com/a/4894156/323100
-                    avg = int(details[details.find("(") + 1 : details.find(")")])
+                    avg = int(details[details.find("(") + 1:details.find(")")])
                 else:
-                    avg = None
-    return avg
+                     avg = None
+    return(avg)
 
 
 def randommovement(logfile, verbose=False):
@@ -293,10 +281,10 @@ def randommovement(logfile, verbose=False):
                 details = line.split('=')[1]
                 if 'ON' in details:
                     # https://stackoverflow.com/a/4894156/323100
-                    rndm = int(details[details.find("(") + 1 : details.find(")")])
+                    rndm = int(details[details.find("(") + 1:details.find(")")])
                 else:
                     rndm = None
-    return rndm
+    return(rndm)
 
 
 def duration(logfile, prose=False, verbose=False):
@@ -316,11 +304,9 @@ def duration(logfile, prose=False, verbose=False):
     # Matches are grouped; hours in group 1, minutes in group 2 and seconds in group 3
     matches = re.match(pattern, duration_log)
     # Create a timedelta object with relevant matches in relevant data
-    time_delta = datetime.timedelta(
-        hours=int(matches.group(1)),
-        minutes=int(matches.group(2)),
-        seconds=int(matches.group(3)),
-    )
+    time_delta = datetime.timedelta(hours=int(matches.group(1)),
+                                    minutes=int(matches.group(2)),
+                                    seconds=int(matches.group(3)))
     if not time_delta.total_seconds():
         print('No time could be parsed from', logfile)
         print('The string found was', duration_log)
@@ -330,12 +316,12 @@ def duration(logfile, prose=False, verbose=False):
         # Return Timedelta object
         # We can then split it with time_delta.components.hour, time_delta.components.minute, time_delta.components.seconds
         # Hat tip to https://stackoverflow.com/a/71407740/323100
-        return time_delta
+        return(time_delta)
     else:
         if verbose:
             print(time_delta.total_seconds())
         # Return the scan time in seconds
-        return time_delta.total_seconds()
+        return(time_delta.total_seconds())
 
 
 def scandate(logfile, verbose=False):
@@ -350,13 +336,14 @@ def scandate(logfile, verbose=False):
                     print('The date string is: %s' % datestring)
                 try:
                     # Try to read explicitly
-                    date = pandas.to_datetime(datestring, format='%d %b %Y %Hh:%Mm:%Ss')
+                    date = pandas.to_datetime(datestring,
+                                              format='%d %b %Y %Hh:%Mm:%Ss')
                 except ValueError:
                     # If we fail, try to figure it out automatically
                     date = pandas.to_datetime(datestring)
                 if verbose:
                     print('Parsed to: %s' % date)
-    return date
+    return(date)
 
 
 # How did we reconstruct the scan?
@@ -375,7 +362,7 @@ def nreconversion(logfile, verbose=False):
                 if verbose:
                     print(line)
                 version = line.split('sion:')[1].strip()
-    return (program, version)
+    return(program, version)
 
 
 def ringremoval(logfile, verbose=False):
@@ -390,7 +377,7 @@ def ringremoval(logfile, verbose=False):
                 ring = int(line.split('=')[1].strip())
                 if ring == 0:
                     ring = None
-    return ring
+    return(ring)
 
 
 def beamhardening(logfile, verbose=False):
@@ -405,8 +392,7 @@ def beamhardening(logfile, verbose=False):
                 bh = int(line.split('=')[1].strip())
                 if bh == 0:
                     bh = None
-    return bh
-
+    return(bh)
 
 def defectpixelmasking(logfile, verbose=False):
     """Check the 'defect pixel masking' setting"""
@@ -419,8 +405,7 @@ def defectpixelmasking(logfile, verbose=False):
                 dpm = int(line.split('=')[1].strip())
                 if dpm == 0:
                     dpm = None
-    return dpm
-
+    return(dpm)
 
 def larger_than_fov(logfile, verbose=False):
     """Did we set the 'object larger than field of view' option"""
@@ -432,10 +417,9 @@ def larger_than_fov(logfile, verbose=False):
                     print(line)
                 ltfov = line.split('=')[1].strip()
     if ltfov == 'ON':
-        return True
+        return(True)
     elif ltfov == 'OFF':
-        return False
-
+        return(False)
 
 def postalignment(logfile, verbose=False):
     """Read the postalignment value"""
@@ -446,8 +430,7 @@ def postalignment(logfile, verbose=False):
                 if verbose:
                     print(line)
                 pav = float(line.split('=')[1].strip())
-    return pav
-
+    return(pav)
 
 def reconstruction_grayvalue(logfile, verbose=False):
     grayvalue = None
@@ -458,7 +441,7 @@ def reconstruction_grayvalue(logfile, verbose=False):
                 if verbose:
                     print(line)
                 grayvalue = float(line.split('=')[1])
-    return grayvalue
+    return(grayvalue)
 
 
 def reconstruction_size(logfile, verbose=False):
@@ -475,8 +458,7 @@ def reconstruction_size(logfile, verbose=False):
                 if verbose:
                     print(line)
                 y = int(line.split('=')[1])
-    return (x, y)
-
+    return(x, y)
 
 def reconstruction_rotation(logfile, verbose=False):
     rotation = None
@@ -487,7 +469,7 @@ def reconstruction_rotation(logfile, verbose=False):
                 if verbose:
                     print(line)
                 rotation = float(line.split('=')[1])
-    return rotation
+    return(rotation)    
 
 
 def slice_first(logfile, verbose=False):
@@ -499,7 +481,7 @@ def slice_first(logfile, verbose=False):
                 if verbose:
                     print(line)
                 first = int(line.split('=')[1])
-    return first
+    return(first)
 
 
 def slice_last(logfile, verbose=False):
@@ -511,8 +493,7 @@ def slice_last(logfile, verbose=False):
                 if verbose:
                     print(line)
                 last = int(line.split('=')[1])
-    return last
-
+    return(last)
 
 def slice_number(logfile, verbose=False):
     number = None
@@ -523,7 +504,7 @@ def slice_number(logfile, verbose=False):
                 if verbose:
                     print(line)
                 number = int(line.split('=')[1])
-    return number
+    return(number)
 
 
 def region_of_interest(logfile, verbose=False):
