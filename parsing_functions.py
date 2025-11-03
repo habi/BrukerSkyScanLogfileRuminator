@@ -6,7 +6,7 @@ import pandas
 # Convenience functions
 def fulllog(logfile):
     """Print the full log file"""
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             print(line.strip())
     return ()
@@ -24,7 +24,7 @@ def timeformat(tdelta, fmt):
 def scanner(logfile, verbose=False):
     machine = None
     hardwareversion = False
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Scanner' in line:
                 if verbose:
@@ -43,7 +43,7 @@ def scanner(logfile, verbose=False):
 
 
 def controlsoftware(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Software' in line and 'Version' in line:
                 if verbose:
@@ -57,7 +57,7 @@ def controlsoftware(logfile, verbose=False):
 
 
 def source(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Source Type' in line:
                 if verbose:
@@ -75,7 +75,7 @@ def source(logfile, verbose=False):
 
 # How did we set up the scan?
 def voltage(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Voltage' in line:
                 if verbose:
@@ -85,7 +85,7 @@ def voltage(logfile, verbose=False):
 
 
 def current(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Source Current' in line:
                 if verbose:
@@ -95,7 +95,7 @@ def current(logfile, verbose=False):
 
 
 def spotsize(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Source spot size' in line:
                 if verbose:
@@ -106,7 +106,7 @@ def spotsize(logfile, verbose=False):
 
 def beamposition(logfile, verbose=False):
     position = None
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Beam position' in line:
                 if verbose:
@@ -116,7 +116,7 @@ def beamposition(logfile, verbose=False):
 
 
 def whichfilter(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Filter=' in line:
                 if verbose:
@@ -128,7 +128,7 @@ def whichfilter(logfile, verbose=False):
 
 
 def camera(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Camera T' in line or 'Camera=' in line:
                 if verbose:
@@ -138,7 +138,7 @@ def camera(logfile, verbose=False):
 
 
 def cameraposition(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Camera' in line and 'osition=' in line:
                 if verbose:
@@ -148,7 +148,7 @@ def cameraposition(logfile, verbose=False):
 
 
 def distance_source_to_detector(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Camera to Source' in line:
                 if verbose:
@@ -158,7 +158,7 @@ def distance_source_to_detector(logfile, verbose=False):
 
 
 def distance_source_to_sample(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Object to Source' in line:
                 if verbose:
@@ -169,7 +169,7 @@ def distance_source_to_sample(logfile, verbose=False):
 
 def numproj(logfile, verbose=False):
     """How many projections are recorded?"""
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             # Sometimes it's 'Number of Files'
             # Sometimes it's 'Number Of Files'
@@ -182,7 +182,7 @@ def numproj(logfile, verbose=False):
 
 def projection_size(logfile):
     """How big did we set the camera?"""
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             # Sometimes it's 'Number of'
             # Sometimes it's 'Number Of'
@@ -194,7 +194,7 @@ def projection_size(logfile):
 
 
 def rotationstep(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Rotation Step' in line:
                 if verbose:
@@ -205,7 +205,7 @@ def rotationstep(logfile, verbose=False):
 
 def pixelsize(logfile, verbose=False, rounded=False):
     """Get the pixel size from the scan log file"""
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Image Pixel' in line and 'Scaled' not in line:
                 if verbose:
@@ -218,7 +218,7 @@ def pixelsize(logfile, verbose=False, rounded=False):
 
 
 def stacks(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         # If only one stack, then Bruker writes nothing to the log file
         numstacks = 0
         for line in f:
@@ -234,7 +234,7 @@ def stacks(logfile, verbose=False):
 
 def overlapscan(logfile, verbose=False):
     wide = False
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'orizontal' in line and 'ffset' in line and 'osition' in line:
                 if verbose:
@@ -246,7 +246,7 @@ def overlapscan(logfile, verbose=False):
 
 
 def threesixtyscan(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if '360 Rotation' in line:
                 if verbose:
@@ -260,7 +260,7 @@ def threesixtyscan(logfile, verbose=False):
 
 
 def exposuretime(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Exposure' in line:
                 if verbose:
@@ -270,7 +270,7 @@ def exposuretime(logfile, verbose=False):
 
 
 def averaging(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Avera' in line:
                 if verbose:
@@ -285,7 +285,7 @@ def averaging(logfile, verbose=False):
 
 
 def randommovement(logfile, verbose=False):
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Random' in line:
                 if verbose:
@@ -301,7 +301,7 @@ def randommovement(logfile, verbose=False):
 
 def duration(logfile, prose=False, verbose=False):
     '''Returns scan duration in *seconds*'''
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Scan duration' in line and 'Estimated' not in line:
                 if verbose:
@@ -340,7 +340,7 @@ def duration(logfile, prose=False, verbose=False):
 
 def scandate(logfile, verbose=False):
     """When did we scan the Sample?"""
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Study Date and Time' in line:
                 if verbose:
@@ -365,7 +365,7 @@ def nreconversion(logfile, verbose=False):
     # Is only written to log files if reconstructed, thus set empty first
     program = None
     version = None
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Reconstruction Program' in line:
                 if verbose:
@@ -382,7 +382,7 @@ def ringremoval(logfile, verbose=False):
     """Did we use ring removal?"""
     # Is only written to log files if reconstructed, thus set empty first
     ring = None
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Ring' in line:
                 if verbose:
@@ -397,7 +397,7 @@ def beamhardening(logfile, verbose=False):
     """Did we set a beam hardening correction?"""
     # Is only written to log files if reconstructed, thus set empty first
     bh = None
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'ardeni' in line:
                 if verbose:
@@ -411,7 +411,7 @@ def beamhardening(logfile, verbose=False):
 def defectpixelmasking(logfile, verbose=False):
     """Check the 'defect pixel masking' setting"""
     dpm = None
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'defect pixel mask' in line:
                 if verbose:
@@ -425,7 +425,7 @@ def defectpixelmasking(logfile, verbose=False):
 def larger_than_fov(logfile, verbose=False):
     """Did we set the 'object larger than field of view' option"""
     ltfov = False
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Object Bigger' in line:
                 if verbose:
@@ -440,7 +440,7 @@ def larger_than_fov(logfile, verbose=False):
 def postalignment(logfile, verbose=False):
     """Read the postalignment value"""
     pav = None
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'post alignment' in line:
                 if verbose:
@@ -452,7 +452,7 @@ def postalignment(logfile, verbose=False):
 def reconstruction_grayvalue(logfile, verbose=False):
     grayvalue = None
     """How did we map the brightness of the reconstructions?"""
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Maximum for' in line:
                 if verbose:
@@ -465,7 +465,7 @@ def reconstruction_size(logfile, verbose=False):
     x = None
     y = None
     """How large are the resulting reconstructions?"""
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Result' in line and 'Width' in line:
                 if verbose:
@@ -481,7 +481,7 @@ def reconstruction_size(logfile, verbose=False):
 def reconstruction_rotation(logfile, verbose=False):
     rotation = None
     """How did we rotate the reconstructions? (NRecons "CS Static Rotation (deg)" value)"""
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'CS Static Rotation Total' in line:
                 if verbose:
@@ -493,7 +493,7 @@ def reconstruction_rotation(logfile, verbose=False):
 def slice_first(logfile, verbose=False):
     first = None
     """What's the first slice?"""
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'First Section' in line:
                 if verbose:
@@ -505,7 +505,7 @@ def slice_first(logfile, verbose=False):
 def slice_last(logfile, verbose=False):
     last = None
     """What's the last slice?"""
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Last Section' in line:
                 if verbose:
@@ -517,7 +517,7 @@ def slice_last(logfile, verbose=False):
 def slice_number(logfile, verbose=False):
     number = None
     """How many slices can we expect on disk?"""
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Sections Count' in line:
                 if verbose:
@@ -535,7 +535,7 @@ def region_of_interest(logfile, verbose=False):
     bottom = False
     left = False
     right = False
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Reconstruction from ROI' in line:
                 if verbose:
