@@ -449,12 +449,15 @@ def postalignment(logfile, verbose=False):
     return pav
 
 
-def reconstruction_grayvalue(logfile, verbose=False):
+def reconstruction_grayvalue(logfile, which='Maximum', verbose=False):
     grayvalue = None
-    """How did we map the brightness of the reconstructions?"""
+    """
+    How did we map the brightness of the reconstructions?
+    Usually we read only the 'Maximum' value, but which='Minimum' is also possible.
+    """
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
-            if 'Maximum for' in line:
+            if which + ' for CS to Image' in line:  # Either search for 'Maximum for CS to Image' or 'Minimum for CS to Image'
                 if verbose:
                     print(line)
                 grayvalue = float(line.split('=')[1])
