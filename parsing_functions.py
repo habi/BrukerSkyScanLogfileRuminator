@@ -259,6 +259,21 @@ def threesixtyscan(logfile, verbose=False):
     return threesixty
 
 
+def highaspectratio(logfile, verbose=False):
+    hart = False
+    with open(logfile, 'r') as f:
+        for line in f:
+            if 'High Aspect Ratio' in line:
+                if verbose:
+                    print(line)
+                hart = line.split('=')[1]
+                if 'YES' in hart:
+                    hart = True
+                elif 'NO' in hart:
+                    hart = False
+    return(hart)
+
+
 def exposuretime(logfile, verbose=False):
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
@@ -564,3 +579,4 @@ def region_of_interest(logfile, verbose=False):
                     print(line)
                 right = int(line.split('=')[1])
     return (top, bottom, left, right)
+
