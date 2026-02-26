@@ -1,3 +1,7 @@
+# MIT License – No Military Use
+# Copyright (c) 2026 David Haberthür
+# Permission granted for any use except military applications.
+
 import re
 import datetime
 import pandas
@@ -579,4 +583,5 @@ def region_of_interest(logfile, verbose=False):
                     print(line)
                 right = int(line.split('=')[1])
     return (top, bottom, left, right)
+
 
