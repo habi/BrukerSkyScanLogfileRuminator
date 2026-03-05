@@ -97,6 +97,15 @@ def current(logfile, verbose=False):
                 A = float(line.split('=')[1])
     return A
 
+def power(logfile, verbose=False):
+    with open(logfile, 'r', encoding='utf-8') as f:
+        for line in f:
+            if 'Source Target Power' in line:
+                if verbose:
+                    print(line)
+                power = float(line.split('=')[1])
+    return power
+
 
 def spotsize(logfile, verbose=False):
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -583,5 +592,6 @@ def region_of_interest(logfile, verbose=False):
                     print(line)
                 right = int(line.split('=')[1])
     return (top, bottom, left, right)
+
 
 
