@@ -15,3 +15,10 @@ Usually, I just add the repository to my other repositories as submodule with
 ````bash
 git submodule add https://github.com/habi/BrukerSkyScanLogfileRuminator
 ````
+
+And then use
+````python
+# Import our own parsing functions which we've added as submodule
+import BrukerSkyScanLogfileRuminator.parsing_functions as logparse
+````
+to import the functions in my scripts.
