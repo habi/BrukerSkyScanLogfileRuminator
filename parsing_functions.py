@@ -30,20 +30,26 @@ def scanner(logfile, verbose=False):
     hardwareversion = False
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
-            if 'Scanner' in line:
+            if 'Scanner=' in line:
                 if verbose:
                     print(line)
-                # Sometimes it's SkyScan, sometimes Skyscan
-                # We thus have to regex it :)
-                machine = re.split('Sky.can', line)[1].strip()
-            if 'Hardware' in line:
+                if 'Sky' in line:
+                    # Sometimes it's SkyScan, sometimes Skyscan
+                    # We thus have to regex it :)
+                    machine = re.split('Sky.can', line)[1].strip()
+                else:
+                    machine = line.split('=')[1].strip()
+            if 'Hardware' in line:  # Only for 1272
                 if verbose:
                     print(line)
                 hardwareversion = line.split('=')[1].strip()
     if hardwareversion:
         return 'SkyScan %s (Version %s)' % (machine, hardwareversion)
     else:
-        return 'SkyScan ' + machine
+        if 'Poseidon' in machine:
+            return machine
+        else:
+            return 'SkyScan ' + machine
 
 
 def controlsoftware(logfile, verbose=False):
