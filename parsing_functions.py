@@ -2,6 +2,8 @@
 # Copyright (c) 2026 David Haberthür
 # Permission granted for any use except military applications.
 
+"""Functions to read the relevant data from Bruker X-ray MicroCT machine log files."""
+
 import re
 import datetime
 import pandas
@@ -17,6 +19,7 @@ def fulllog(logfile):
 
 
 def timeformat(tdelta, fmt):
+    """Helper to format the scan duration in a human-readable way"""
     # From https://stackoverflow.com/a/8907269/323100
     d = {"days": tdelta.days}
     d["hours"], rem = divmod(tdelta.seconds, 3600)
@@ -26,6 +29,7 @@ def timeformat(tdelta, fmt):
 
 # How is the machine set up in general?
 def scanner(logfile, verbose=False):
+    """ What machine did we use? Also return hardware version for 1272 """
     machine = None
     hardwareversion = False
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -54,6 +58,7 @@ def scanner(logfile, verbose=False):
 
 
 def controlsoftware(logfile, verbose=False):
+    """What control software did we use?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Software' in line and 'Version' in line:
@@ -68,6 +73,7 @@ def controlsoftware(logfile, verbose=False):
 
 
 def source(logfile, verbose=False):
+    """"What X-ray source is in the machine?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Source Type' in line:
@@ -86,6 +92,7 @@ def source(logfile, verbose=False):
 
 # How did we set up the scan?
 def voltage(logfile, verbose=False):
+    """What voltage did we set the X-ray source to?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Voltage' in line:
@@ -96,6 +103,7 @@ def voltage(logfile, verbose=False):
 
 
 def current(logfile, verbose=False):
+    """What current did we set the X-ray source to?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Source Current' in line:
@@ -105,6 +113,7 @@ def current(logfile, verbose=False):
                 return A
 
 def power(logfile, verbose=False):
+    """What's the resulting power of the X-ray source?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Source Target Power' in line:
@@ -115,6 +124,7 @@ def power(logfile, verbose=False):
 
 
 def spotsize(logfile, verbose=False):
+    """What's the set spot size of the X-ray source?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Source spot size' in line:
@@ -125,6 +135,7 @@ def spotsize(logfile, verbose=False):
 
 
 def beamposition(logfile, verbose=False):
+    """What's the beam position?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Beam position' in line:
@@ -135,6 +146,7 @@ def beamposition(logfile, verbose=False):
 
 
 def whichfilter(logfile, verbose=False):
+    """Which filter did we use?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Filter=' in line:
@@ -147,6 +159,7 @@ def whichfilter(logfile, verbose=False):
 
 
 def camera(logfile, verbose=False):
+    """What camera/detector is in the machine?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Camera T' in line or 'Camera=' in line:
@@ -157,6 +170,7 @@ def camera(logfile, verbose=False):
 
 
 def cameraposition(logfile, verbose=False):
+    """What's the camera position?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Camera' in line and 'osition=' in line:
@@ -167,6 +181,7 @@ def cameraposition(logfile, verbose=False):
 
 
 def distance_source_to_detector(logfile, verbose=False):
+    """What's the distance from the X-ray source to the detector?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Camera to Source' in line:
@@ -177,6 +192,7 @@ def distance_source_to_detector(logfile, verbose=False):
 
 
 def distance_source_to_sample(logfile, verbose=False):
+    ""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Object to Source' in line:
@@ -200,7 +216,7 @@ def numproj(logfile, verbose=False):
 
 
 def projection_size(logfile):
-    """How big did we set the camera?"""
+    """How big are the projections? E.g. did we set any binning?"""
     x = None
     y = None
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -216,6 +232,7 @@ def projection_size(logfile):
 
 
 def rotationstep(logfile, verbose=False):
+    """What's the rotation step size?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Rotation Step' in line:
@@ -240,6 +257,7 @@ def pixelsize(logfile, verbose=False, rounded=False):
 
 
 def stacks(logfile, verbose=False):
+    """How many stacks did we scan?"""
     # If only one stack, then Bruker writes nothing to the log file
     numstacks = 0
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -252,6 +270,7 @@ def stacks(logfile, verbose=False):
 
 
 def overlapscan(logfile, verbose=False):
+    """Did we do an overlap scan?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'orizontal' in line and 'ffset' in line and 'osition' in line:
@@ -264,6 +283,7 @@ def overlapscan(logfile, verbose=False):
 
 
 def threesixtyscan(logfile, verbose=False):
+    """Did we do a 360° scan?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if '360 Rotation' in line:
@@ -278,6 +298,7 @@ def threesixtyscan(logfile, verbose=False):
 
 
 def highaspectratio(logfile, verbose=False):
+    """Did we do a 'High Aspect Ratio' scan?"""
     hart = False
     with open(logfile, 'r') as f:
         for line in f:
@@ -289,10 +310,11 @@ def highaspectratio(logfile, verbose=False):
                     hart = True
                 elif 'NO' in hart:
                     hart = False
-    return(hart)
+    return hart
 
 
 def exposuretime(logfile, verbose=False):
+    """What exposure time did we set?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Exposure' in line:
@@ -303,6 +325,7 @@ def exposuretime(logfile, verbose=False):
 
 
 def averaging(logfile, verbose=False):
+    """Did we do averaging? If yes, how many frames did we average?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Avera' in line:
@@ -318,6 +341,7 @@ def averaging(logfile, verbose=False):
 
 
 def randommovement(logfile, verbose=False):
+    """Did we do a random movement scan?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Random' in line:
@@ -333,7 +357,7 @@ def randommovement(logfile, verbose=False):
 
 
 def duration(logfile, prose=False, verbose=False):
-    '''Returns scan duration in *seconds*'''
+    """Returns scan duration in *seconds*"""
     duration_log = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
@@ -364,8 +388,8 @@ def duration(logfile, prose=False, verbose=False):
     if prose:
         if verbose:
             print(time_delta)
-        # Return Timedelta object
-        # We can then split it with time_delta.components.hour, time_delta.components.minute, time_delta.components.seconds
+        # Return Timedelta object, which we can then split into components like
+        # time_delta.components.hour, time_delta.components.minute, time_delta.components.seconds
         # Hat tip to https://stackoverflow.com/a/71407740/323100
         return time_delta
     else:
@@ -495,7 +519,8 @@ def reconstruction_grayvalue(logfile, which='Maximum', verbose=False):
     """
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
-            if which + ' for CS to Image' in line:  # Either search for 'Maximum for CS to Image' or 'Minimum for CS to Image'
+            # Either search for 'Maximum for CS to Image' or 'Minimum for CS to Image'
+            if which + ' for CS to Image' in line:
                 if verbose:
                     print(line)
                 grayvalue = float(line.split('=')[1])
@@ -503,9 +528,9 @@ def reconstruction_grayvalue(logfile, which='Maximum', verbose=False):
 
 
 def reconstruction_size(logfile, verbose=False):
+    """How large are the resulting reconstructions?"""
     x = None
     y = None
-    """How large are the resulting reconstructions?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Result' in line and 'Width' in line:
@@ -520,8 +545,8 @@ def reconstruction_size(logfile, verbose=False):
 
 
 def reconstruction_rotation(logfile, verbose=False):
-    rotation = None
     """How did we rotate the reconstructions? (NRecons "CS Static Rotation (deg)" value)"""
+    rotation = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'CS Static Rotation Total' in line:
@@ -532,8 +557,8 @@ def reconstruction_rotation(logfile, verbose=False):
 
 
 def slice_first(logfile, verbose=False):
-    first = None
     """What's the first slice?"""
+    first = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'First Section' in line:
@@ -544,8 +569,8 @@ def slice_first(logfile, verbose=False):
 
 
 def slice_last(logfile, verbose=False):
-    last = None
     """What's the last slice?"""
+    last = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Last Section' in line:
@@ -556,8 +581,8 @@ def slice_last(logfile, verbose=False):
 
 
 def slice_number(logfile, verbose=False):
-    number = None
     """How many slices can we expect on disk?"""
+    number = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Sections Count' in line:
@@ -602,6 +627,3 @@ def region_of_interest(logfile, verbose=False):
                     print(line)
                 right = int(line.split('=')[1])
     return (top, bottom, left, right)
-
-
-
