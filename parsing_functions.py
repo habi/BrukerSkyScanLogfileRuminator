@@ -419,10 +419,9 @@ def scandate(logfile, verbose=False):
 
 # How did we reconstruct the scan?
 def nreconversion(logfile, verbose=False):
-    """Return reconstruction program an its version"""
-    # Is only written to log files if reconstructed, thus set empty first
-    program = None
-    version = None
+    """Return reconstruction program and its version"""
+    # Is only written to log files if reconstructed; returns (None, None) if absent
+    program = version = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Reconstruction Program' in line:
@@ -434,66 +433,51 @@ def nreconversion(logfile, verbose=False):
                     print(line)
                 version = line.split('sion:')[1].strip()
                 break
-    return (program, version)
+    return program, version
 
 
 def ringremoval(logfile, verbose=False):
     """Did we use ring removal?"""
-    # Is only written to log files if reconstructed, thus set empty first
-    ring = None
+    # Is only written to log files if reconstructed; returns None if absent or zero
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Ring' in line:
                 if verbose:
                     print(line)
-                ring = int(line.split('=')[1].strip())
-                if ring == 0:
-                    ring = None
-    return ring
+                return int(line.split('=')[1].strip()) or None
 
 
 def beamhardening(logfile, verbose=False):
     """Did we set a beam hardening correction?"""
-    # Is only written to log files if reconstructed, thus set empty first
-    bh = None
+    # Is only written to log files if reconstructed; returns None if absent or zero
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'ardeni' in line:
                 if verbose:
                     print(line)
-                bh = int(line.split('=')[1].strip())
-                if bh == 0:
-                    bh = None
-    return bh
+                return int(line.split('=')[1].strip()) or None
 
 
 def defectpixelmasking(logfile, verbose=False):
     """Check the 'defect pixel masking' setting"""
-    dpm = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'defect pixel mask' in line:
                 if verbose:
                     print(line)
-                dpm = int(line.split('=')[1].strip())
-                if dpm == 0:
-                    dpm = None
-    return dpm
+                # Return found value OR None if the value is 0 (i.e. if we didn't set defect pixel masking)
+                return int(line.split('=')[1].strip()) or None
 
 
 def larger_than_fov(logfile, verbose=False):
     """Did we set the 'object larger than field of view' option"""
-    ltfov = False
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Object Bigger' in line:
                 if verbose:
                     print(line)
-                ltfov = line.split('=')[1].strip()
-    if ltfov == 'ON':
-        return True
-    elif ltfov == 'OFF':
-        return False
+                # Checks if the line says 'ON', and then returns True, otherwise False
+                return line.split('=')[1].strip() == 'ON'
 
 
 def postalignment(logfile, verbose=False):
