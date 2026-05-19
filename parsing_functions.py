@@ -308,7 +308,6 @@ def threesixtyscan(logfile, verbose=False):
 
 def highaspectratio(logfile, verbose=False):
     """Did we do a 'High Aspect Ratio' scan?"""
-    hart = False
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'High Aspect Ratio' in line:
@@ -316,10 +315,10 @@ def highaspectratio(logfile, verbose=False):
                     print(line)
                 hart = line.split('=')[1]
                 if 'YES' in hart:
-                    hart = True
+                    return True
                 elif 'NO' in hart:
-                    hart = False
-    return hart
+                    return False
+    return None
 
 
 def exposuretime(logfile, verbose=False):
