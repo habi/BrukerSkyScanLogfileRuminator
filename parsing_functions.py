@@ -50,11 +50,9 @@ def scanner(logfile, verbose=False):
                 break
     if hardwareversion:
         return 'SkyScan %s (Version %s)' % (machine, hardwareversion)
-    else:
-        if 'Poseidon' in machine:
-            return machine
-        else:
-            return 'SkyScan ' + machine
+    if 'Poseidon' in machine:
+        return machine
+    return 'SkyScan ' + machine
 
 
 def controlsoftware(logfile, verbose=False):
@@ -392,11 +390,10 @@ def duration(logfile, prose=False, verbose=False):
         # time_delta.components.hour, time_delta.components.minute, time_delta.components.seconds
         # Hat tip to https://stackoverflow.com/a/71407740/323100
         return time_delta
-    else:
-        if verbose:
-            print(time_delta.total_seconds())
-        # Return the scan time in seconds
-        return time_delta.total_seconds()
+    if verbose:
+        print(time_delta.total_seconds())
+    # Return the scan time in seconds
+    return time_delta.total_seconds()
 
 
 def scandate(logfile, verbose=False):
@@ -608,8 +605,6 @@ def region_of_interest(logfile, verbose=False):
                     print(line)
                 if line.split('=')[1].strip() == 'OFF':
                     return False
-                else:
-                    pass
             elif 'ROI' in line and 'Top' in line:
                 if verbose:
                     print(line)
