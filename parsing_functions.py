@@ -77,15 +77,15 @@ def source(logfile, verbose=False):
             if 'Source Type' in line:
                 if verbose:
                     print(line)
-                whichsource = line.split('=')[1].strip()
-                if 'HAMAMA' in whichsource:
+                which_source = line.split('=')[1].strip()
+                if 'HAMAMA' in which_source:
                     # Split the string at '_L' to separate HAMAMATSU_L118
                     # Then capitalize HAMAMATSU and join the strings back
                     # with ' L' to get the beginning of the reference back
-                    whichsource = ' L'.join(
-                        [s.capitalize() for s in whichsource.split('_L')]
+                    which_source = ' L'.join(
+                        [s.capitalize() for s in which_source.split('_L')]
                     )
-                return whichsource
+                return which_source
 
 
 # How did we set up the scan?
@@ -96,8 +96,8 @@ def voltage(logfile, verbose=False):
             if 'Voltage' in line:
                 if verbose:
                     print(line)
-                V = float(line.split('=')[1])
-                return V
+                voltage = float(line.split('=')[1])
+                return voltage
 
 
 def current(logfile, verbose=False):
@@ -107,8 +107,8 @@ def current(logfile, verbose=False):
             if 'Source Current' in line:
                 if verbose:
                     print(line)
-                A = float(line.split('=')[1])
-                return A
+                current = float(line.split('=')[1])
+                return current
 
 def power(logfile, verbose=False):
     """What's the resulting power of the X-ray source?"""
@@ -117,8 +117,9 @@ def power(logfile, verbose=False):
             if 'Source Target Power' in line:
                 if verbose:
                     print(line)
-                power = float(line.split('=')[1])
-    return power
+                pwr = float(line.split('=')[1])
+                return pwr
+    return None
 
 
 def spotsize(logfile, verbose=False):
@@ -247,11 +248,11 @@ def pixelsize(logfile, verbose=False, rounded=False):
             if 'Image Pixel' in line and 'Scaled' not in line:
                 if verbose:
                     print(line)
-                pixelsize = float(line.split('=')[1])
+                pxlsz = float(line.split('=')[1])
                 if rounded:
-                    return round(pixelsize, 2)
+                    return round(pxlsz, 2)
                 else:
-                    return pixelsize
+                    return pxlsz
 
 
 def stacks(logfile, verbose=False):
