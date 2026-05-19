@@ -15,7 +15,6 @@ def fulllog(logfile):
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             print(line.strip())
-    return ()
 
 
 def timeformat(tdelta, fmt):
@@ -68,6 +67,7 @@ def controlsoftware(logfile, verbose=False):
                     line.split('=')[1].strip().strip('Version ').replace(". ", ".")
                 )
                 return str(version)
+    return None
 
 
 def source(logfile, verbose=False):
@@ -86,6 +86,7 @@ def source(logfile, verbose=False):
                         [s.capitalize() for s in which_source.split('_L')]
                     )
                 return which_source
+    return None
 
 
 # How did we set up the scan?
@@ -98,6 +99,7 @@ def voltage(logfile, verbose=False):
                     print(line)
                 voltage = float(line.split('=')[1])
                 return voltage
+    return None
 
 
 def current(logfile, verbose=False):
@@ -109,6 +111,7 @@ def current(logfile, verbose=False):
                     print(line)
                 current = float(line.split('=')[1])
                 return current
+    return None
 
 def power(logfile, verbose=False):
     """What's the resulting power of the X-ray source?"""
@@ -131,6 +134,7 @@ def spotsize(logfile, verbose=False):
                     print(line)
                 whichspotsize = line.split('=')[1].strip()
                 return whichspotsize
+    return None
 
 
 def beamposition(logfile, verbose=False):
@@ -142,6 +146,7 @@ def beamposition(logfile, verbose=False):
                     print(line)
                 position = int(line.split('=')[1])
                 return position
+    return None
 
 
 def whichfilter(logfile, verbose=False):
@@ -155,7 +160,7 @@ def whichfilter(logfile, verbose=False):
                 if fltr == 'No Filter':
                     fltr = None
                 return fltr
-
+    return None
 
 def camera(logfile, verbose=False):
     """What camera/detector is in the machine?"""
@@ -166,7 +171,7 @@ def camera(logfile, verbose=False):
                     print(line)
                 cam = line.split('=')[1].strip().strip(' camera')
                 return cam
-
+    return None
 
 def cameraposition(logfile, verbose=False):
     """What's the camera position?"""
@@ -177,7 +182,7 @@ def cameraposition(logfile, verbose=False):
                     print(line)
                 camposition = line.split('=')[1].strip()
                 return camposition
-
+    return None
 
 def distance_source_to_detector(logfile, verbose=False):
     """What's the distance from the X-ray source to the detector?"""
@@ -188,7 +193,7 @@ def distance_source_to_detector(logfile, verbose=False):
                     print(line)
                 sdd = line.split('=')[1].strip()
                 return sdd
-
+    return None
 
 def distance_source_to_sample(logfile, verbose=False):
     """What's the distance from the X-ray source to the sample?"""
@@ -199,6 +204,7 @@ def distance_source_to_sample(logfile, verbose=False):
                     print(line)
                 ssd = line.split('=')[1].strip()
                 return ssd
+    return None
 
 
 def numproj(logfile, verbose=False):
@@ -212,6 +218,7 @@ def numproj(logfile, verbose=False):
                     print(line)
                 numberofprojections = int(line.split('=')[1])
                 return numberofprojections
+    return None
 
 
 def projection_size(logfile):
@@ -239,6 +246,7 @@ def rotationstep(logfile, verbose=False):
                     print(line)
                 rotstep = float(line.split('=')[1])
                 return rotstep
+    return None
 
 
 def pixelsize(logfile, verbose=False, rounded=False):
@@ -279,6 +287,7 @@ def overlapscan(logfile, verbose=False):
                 if wide == 1:
                     wide = False
                 return wide
+    return None
 
 
 def threesixtyscan(logfile, verbose=False):
@@ -294,6 +303,7 @@ def threesixtyscan(logfile, verbose=False):
                 elif 'NO' in threesixty:
                     threesixty = False
                 return threesixty
+    return None
 
 
 def highaspectratio(logfile, verbose=False):
@@ -321,7 +331,7 @@ def exposuretime(logfile, verbose=False):
                     print(line)
                 exp = int(line.split('=')[1])
                 return exp
-
+    return None
 
 def averaging(logfile, verbose=False):
     """Did we do averaging? If yes, how many frames did we average?"""
@@ -337,6 +347,7 @@ def averaging(logfile, verbose=False):
                 else:
                     avg = None
                 return avg
+    return None
 
 
 def randommovement(logfile, verbose=False):
@@ -353,6 +364,7 @@ def randommovement(logfile, verbose=False):
                 else:
                     rndm = None
                 return rndm
+    return None
 
 
 def duration(logfile, prose=False, verbose=False):
