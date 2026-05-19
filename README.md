@@ -1,3 +1,5 @@
+# Parser for Bruker X-ray MicroCT machine log files
+
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/habi/BrukerSkyScanLogfileRuminator/HEAD?labpath=LogfileRuminator.ipynb)
 [![DOI](https://zenodo.org/badge/622975902.svg)](https://doi.org/10.5281/zenodo.15607943)
 
@@ -11,14 +13,42 @@ An example of such a table is shown in [ScanningDetails.csv](ScanningDetails.csv
 *Very* often, the code is adapted from what is shown here, but this is a common baseline I always use.
 The repository contains a `logfiles` subfolder with some examples of log files and is set up in a way that it can be run in Binder, just click the link button at the top.
 
-Usually, I just add the repository to my other repositories as submodule with 
+Usually, I just add the repository to my other repositories as submodule with
+
 ````bash
 git submodule add https://github.com/habi/BrukerSkyScanLogfileRuminator
 ````
 
 And then use
+
 ````python
-# Import our own parsing functions which we've added as submodule
 import BrukerSkyScanLogfileRuminator.parsing_functions as logparse
 ````
+
 to import the functions in my scripts.
+
+Then you set up a folder in which you want to look for all the relevant log files with
+
+````python
+if 'Linux' in platform.system():
+    BasePath = os.path.join(os.path.sep, 'Mount')
+elif 'Windows' in platform.system():
+    BasePath = os.path.join('M:', os.path.sep)
+Root = os.path.join(BasePath, 'SomeFolder', 'SomeProject')
+````
+
+And put the log files into a `pandas` dataframe with
+
+````python
+Data = pandas.DataFrame()
+Data['LogFile'] = [os.path.join(root, name)
+                   for root, dirs, files in os.walk(Root)
+                   for name in files
+                   if name.endswith((".log"))]
+````
+
+you can pull all the relevant data out of the log files with
+
+````python
+Data['Voxelsize'] = [logparse.pixelsize(log) for log in Data['LogFile']]
+````
