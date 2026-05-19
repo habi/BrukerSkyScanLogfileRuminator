@@ -482,14 +482,13 @@ def larger_than_fov(logfile, verbose=False):
 
 def postalignment(logfile, verbose=False):
     """Read the postalignment value"""
-    pav = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'post alignment' in line:
                 if verbose:
                     print(line)
-                pav = float(line.split('=')[1].strip())
-    return pav
+                return float(line.split('=')[1].strip())
+    return None
 
 
 def reconstruction_grayvalue(logfile, which='Maximum', verbose=False):
@@ -497,15 +496,14 @@ def reconstruction_grayvalue(logfile, which='Maximum', verbose=False):
     How did we map the brightness of the reconstructions?
     Usually we read only the 'Maximum' value, but which='Minimum' is also possible.
     """
-    grayvalue = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             # Either search for 'Maximum for CS to Image' or 'Minimum for CS to Image'
             if which + ' for CS to Image' in line:
                 if verbose:
                     print(line)
-                grayvalue = float(line.split('=')[1])
-    return grayvalue
+                return float(line.split('=')[1])
+    return None
 
 
 def reconstruction_size(logfile, verbose=False):
