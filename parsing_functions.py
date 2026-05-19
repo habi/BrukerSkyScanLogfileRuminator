@@ -555,38 +555,32 @@ def reconstruction_rotation(logfile, verbose=False):
 
 def slice_first(logfile, verbose=False):
     """What's the first slice?"""
-    first = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'First Section' in line:
                 if verbose:
                     print(line)
-                first = int(line.split('=')[1])
-    return first
+                return int(line.split('=')[1])
 
 
 def slice_last(logfile, verbose=False):
     """What's the last slice?"""
-    last = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Last Section' in line:
                 if verbose:
                     print(line)
-                last = int(line.split('=')[1])
-    return last
+                return int(line.split('=')[1])
 
 
 def slice_number(logfile, verbose=False):
     """How many slices can we expect on disk?"""
-    number = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Sections Count' in line:
                 if verbose:
                     print(line)
-                number = int(line.split('=')[1])
-    return number
+                return int(line.split('=')[1])
 
 
 def region_of_interest(logfile, verbose=False):
