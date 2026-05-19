@@ -1,0 +1,4 @@
+[tool.black]
+# Preserve existing quote style instead of converting to double quotes
+# Single quotes are one keystroke on a Swiss German keyboard layout while double quotes require pressing Shift, too
+skip-string-normalization = true
