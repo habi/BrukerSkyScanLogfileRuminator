@@ -28,7 +28,7 @@ def timeformat(tdelta, fmt):
 
 # How is the machine set up in general?
 def scanner(logfile, verbose=False):
-    """ What machine did we use? Also return hardware version for 1272 """
+    """What machine did we use? Also return hardware version for 1272"""
     machine = None
     hardwareversion = False
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -71,7 +71,7 @@ def controlsoftware(logfile, verbose=False):
 
 
 def source(logfile, verbose=False):
-    """"What X-ray source is in the machine?"""
+    """What X-ray source is in the machine?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Source Type' in line:
@@ -110,6 +110,7 @@ def current(logfile, verbose=False):
                     print(line)
                 return float(line.split('=')[1])
     return None
+
 
 def power(logfile, verbose=False):
     """What's the resulting power of the X-ray source?"""
@@ -157,6 +158,7 @@ def whichfilter(logfile, verbose=False):
                 return fltr
     return None
 
+
 def camera(logfile, verbose=False):
     """What camera/detector is in the machine?"""
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -166,6 +168,7 @@ def camera(logfile, verbose=False):
                     print(line)
                 return line.split('=')[1].strip().strip(' camera')
     return None
+
 
 def cameraposition(logfile, verbose=False):
     """What's the camera position?"""
@@ -177,6 +180,7 @@ def cameraposition(logfile, verbose=False):
                 return line.split('=')[1].strip()
     return None
 
+
 def distance_source_to_detector(logfile, verbose=False):
     """What's the distance from the X-ray source to the detector?"""
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -186,6 +190,7 @@ def distance_source_to_detector(logfile, verbose=False):
                     print(line)
                 return line.split('=')[1].strip()
     return None
+
 
 def distance_source_to_sample(logfile, verbose=False):
     """What's the distance from the X-ray source to the sample?"""
