@@ -43,6 +43,8 @@ def scanner(logfile, verbose=False):
                 if verbose:
                     print(line)
                 hardwareversion = line.split('=')[1].strip()
+            if machine is not None and hardwareversion:
+                return 'SkyScan %s (Version %s)' % (machine, hardwareversion)
     if hardwareversion:
         return 'SkyScan %s (Version %s)' % (machine, hardwareversion)
     else:
@@ -60,10 +62,8 @@ def controlsoftware(logfile, verbose=False):
                     print(line)
                 # Sometimes it's 'Software Verion=Number'
                 # Sometimes it's 'Software=Version Number' (with a space in Number)
-                version = (
-                    line.split('=')[1].strip().strip('Version ').replace(". ", ".")
-                )
-    return str(version)
+                return line.split('=')[1].strip().strip('Version ').replace(". ", ".")
+    return None
 
 
 def source(logfile, verbose=False):
@@ -80,7 +80,8 @@ def source(logfile, verbose=False):
                     whichsource = ' L'.join(
                         [s.capitalize() for s in whichsource.split('_L')]
                     )
-    return whichsource
+                return whichsource
+    return None
 
 
 # How did we set up the scan?
@@ -90,8 +91,8 @@ def voltage(logfile, verbose=False):
             if 'Voltage' in line:
                 if verbose:
                     print(line)
-                V = float(line.split('=')[1])
-    return V
+                return float(line.split('=')[1])
+    return None
 
 
 def current(logfile, verbose=False):
@@ -100,8 +101,8 @@ def current(logfile, verbose=False):
             if 'Source Current' in line:
                 if verbose:
                     print(line)
-                A = float(line.split('=')[1])
-    return A
+                return float(line.split('=')[1])
+    return None
 
 def power(logfile, verbose=False):
     with open(logfile, 'r', encoding='utf-8') as f:
@@ -109,8 +110,8 @@ def power(logfile, verbose=False):
             if 'Source Target Power' in line:
                 if verbose:
                     print(line)
-                power = float(line.split('=')[1])
-    return power
+                return float(line.split('=')[1])
+    return None
 
 
 def spotsize(logfile, verbose=False):
@@ -119,19 +120,18 @@ def spotsize(logfile, verbose=False):
             if 'Source spot size' in line:
                 if verbose:
                     print(line)
-                whichspotsize = line.split('=')[1].strip()
-    return whichspotsize
+                return line.split('=')[1].strip()
+    return None
 
 
 def beamposition(logfile, verbose=False):
-    position = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Beam position' in line:
                 if verbose:
                     print(line)
-                position = int(line.split('=')[1])
-    return position
+                return int(line.split('=')[1])
+    return None
 
 
 def whichfilter(logfile, verbose=False):
@@ -143,7 +143,8 @@ def whichfilter(logfile, verbose=False):
                 fltr = line.split('=')[1].strip().replace('  ', ' ')
                 if fltr == 'No Filter':
                     fltr = None
-    return fltr
+                return fltr
+    return None
 
 
 def camera(logfile, verbose=False):
@@ -152,8 +153,8 @@ def camera(logfile, verbose=False):
             if 'Camera T' in line or 'Camera=' in line:
                 if verbose:
                     print(line)
-                cam = line.split('=')[1].strip().strip(' camera')
-    return cam
+                return line.split('=')[1].strip().strip(' camera')
+    return None
 
 
 def cameraposition(logfile, verbose=False):
@@ -162,8 +163,8 @@ def cameraposition(logfile, verbose=False):
             if 'Camera' in line and 'osition=' in line:
                 if verbose:
                     print(line)
-                camposition = line.split('=')[1].strip()
-    return camposition
+                return line.split('=')[1].strip()
+    return None
 
 
 def distance_source_to_detector(logfile, verbose=False):
@@ -172,8 +173,8 @@ def distance_source_to_detector(logfile, verbose=False):
             if 'Camera to Source' in line:
                 if verbose:
                     print(line)
-                sdd = line.split('=')[1].strip()
-    return sdd
+                return line.split('=')[1].strip()
+    return None
 
 
 def distance_source_to_sample(logfile, verbose=False):
@@ -182,8 +183,8 @@ def distance_source_to_sample(logfile, verbose=False):
             if 'Object to Source' in line:
                 if verbose:
                     print(line)
-                ssd = line.split('=')[1].strip()
-    return ssd
+                return line.split('=')[1].strip()
+    return None
 
 
 def numproj(logfile, verbose=False):
@@ -195,12 +196,14 @@ def numproj(logfile, verbose=False):
             if 'Number' in line and 'f Files' in line:
                 if verbose:
                     print(line)
-                numberofprojections = int(line.split('=')[1])
-    return numberofprojections
+                return int(line.split('=')[1])
+    return None
 
 
 def projection_size(logfile):
     """How big did we set the camera?"""
+    x = None
+    y = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             # Sometimes it's 'Number of'
@@ -209,6 +212,8 @@ def projection_size(logfile):
                 y = int(line.split('=')[1])
             if 'Number' in line and 'f Columns' in line:
                 x = int(line.split('=')[1])
+            if x is not None and y is not None:
+                return (x, y)
     return (x, y)
 
 
@@ -218,8 +223,8 @@ def rotationstep(logfile, verbose=False):
             if 'Rotation Step' in line:
                 if verbose:
                     print(line)
-                rotstep = float(line.split('=')[1])
-    return rotstep
+                return float(line.split('=')[1])
+    return None
 
 
 def pixelsize(logfile, verbose=False, rounded=False):
@@ -229,11 +234,11 @@ def pixelsize(logfile, verbose=False, rounded=False):
             if 'Image Pixel' in line and 'Scaled' not in line:
                 if verbose:
                     print(line)
-                pixelsize = float(line.split('=')[1])
-    if rounded:
-        return round(pixelsize, 2)
-    else:
-        return pixelsize
+                px_size = float(line.split('=')[1])
+                if rounded:
+                    return round(px_size, 2)
+                return px_size
+    return None
 
 
 def stacks(logfile, verbose=False):
@@ -252,7 +257,6 @@ def stacks(logfile, verbose=False):
 
 
 def overlapscan(logfile, verbose=False):
-    wide = False
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'orizontal' in line and 'ffset' in line and 'osition' in line:
@@ -261,7 +265,8 @@ def overlapscan(logfile, verbose=False):
                 wide = int(line.split('=')[1])
                 if wide == 1:
                     wide = False
-    return wide
+                return wide
+    return False
 
 
 def threesixtyscan(logfile, verbose=False):
@@ -275,11 +280,11 @@ def threesixtyscan(logfile, verbose=False):
                     threesixty = True
                 elif 'NO' in threesixty:
                     threesixty = False
-    return threesixty
+                return threesixty
+    return None
 
 
 def highaspectratio(logfile, verbose=False):
-    hart = False
     with open(logfile, 'r') as f:
         for line in f:
             if 'High Aspect Ratio' in line:
@@ -290,7 +295,8 @@ def highaspectratio(logfile, verbose=False):
                     hart = True
                 elif 'NO' in hart:
                     hart = False
-    return(hart)
+                return hart
+    return False
 
 
 def exposuretime(logfile, verbose=False):
@@ -299,8 +305,8 @@ def exposuretime(logfile, verbose=False):
             if 'Exposure' in line:
                 if verbose:
                     print(line)
-                exp = int(line.split('=')[1])
-    return exp
+                return int(line.split('=')[1])
+    return None
 
 
 def averaging(logfile, verbose=False):
@@ -315,7 +321,8 @@ def averaging(logfile, verbose=False):
                     avg = int(details[details.find("(") + 1 : details.find(")")])
                 else:
                     avg = None
-    return avg
+                return avg
+    return None
 
 
 def randommovement(logfile, verbose=False):
@@ -330,7 +337,8 @@ def randommovement(logfile, verbose=False):
                     rndm = int(details[details.find("(") + 1 : details.find(")")])
                 else:
                     rndm = None
-    return rndm
+                return rndm
+    return None
 
 
 def duration(logfile, prose=False, verbose=False):
@@ -341,35 +349,35 @@ def duration(logfile, prose=False, verbose=False):
                 if verbose:
                     print(line)
                 duration_log = line.split('=')[1].strip()
-    # Sometimes it's '00:24:26', sometimes '0h:52m:53s' :-/
-    if 'h' in duration_log:
-        # Thanks to ChatGPT for the help with Regex parsing and grouping
-        pattern = r"(?:(\d+)h)(?::?(\d+)m)(?::?(\d+)s)"
-    else:
-        pattern = r"(?:(\d+))(?::?(\d+))(?::?(\d+))"
-    # Matches are grouped; hours in group 1, minutes in group 2 and seconds in group 3
-    matches = re.match(pattern, duration_log)
-    # Create a timedelta object with relevant matches in relevant data
-    time_delta = datetime.timedelta(
-        hours=int(matches.group(1)),
-        minutes=int(matches.group(2)),
-        seconds=int(matches.group(3)),
-    )
-    if not time_delta.total_seconds():
-        print('No time could be parsed from', logfile)
-        print('The string found was', duration_log)
-    if prose:
-        if verbose:
-            print(time_delta)
-        # Return Timedelta object
-        # We can then split it with time_delta.components.hour, time_delta.components.minute, time_delta.components.seconds
-        # Hat tip to https://stackoverflow.com/a/71407740/323100
-        return time_delta
-    else:
-        if verbose:
-            print(time_delta.total_seconds())
-        # Return the scan time in seconds
-        return time_delta.total_seconds()
+                # Sometimes it's '00:24:26', sometimes '0h:52m:53s' :-/
+                if 'h' in duration_log:
+                    # Thanks to ChatGPT for the help with Regex parsing and grouping
+                    pattern = r"(?:(\d+)h)(?::?(\d+)m)(?::?(\d+)s)"
+                else:
+                    pattern = r"(?:(\d+))(?::?(\d+))(?::?(\d+))"
+                # Matches are grouped; hours in group 1, minutes in group 2 and seconds in group 3
+                matches = re.match(pattern, duration_log)
+                # Create a timedelta object with relevant matches in relevant data
+                time_delta = datetime.timedelta(
+                    hours=int(matches.group(1)),
+                    minutes=int(matches.group(2)),
+                    seconds=int(matches.group(3)),
+                )
+                if not time_delta.total_seconds():
+                    print('No time could be parsed from', logfile)
+                    print('The string found was', duration_log)
+                if prose:
+                    if verbose:
+                        print(time_delta)
+                    # Return Timedelta object
+                    # We can then split it with time_delta.components.hour, time_delta.components.minute, time_delta.components.seconds
+                    # Hat tip to https://stackoverflow.com/a/71407740/323100
+                    return time_delta
+                if verbose:
+                    print(time_delta.total_seconds())
+                # Return the scan time in seconds
+                return time_delta.total_seconds()
+    return None
 
 
 def scandate(logfile, verbose=False):
@@ -390,7 +398,8 @@ def scandate(logfile, verbose=False):
                     date = pandas.to_datetime(datestring)
                 if verbose:
                     print('Parsed to: %s' % date)
-    return date
+                return date
+    return None
 
 
 # How did we reconstruct the scan?
@@ -409,6 +418,8 @@ def nreconversion(logfile, verbose=False):
                 if verbose:
                     print(line)
                 version = line.split('sion:')[1].strip()
+            if program is not None and version is not None:
+                return (program, version)
     return (program, version)
 
 
@@ -424,6 +435,7 @@ def ringremoval(logfile, verbose=False):
                 ring = int(line.split('=')[1].strip())
                 if ring == 0:
                     ring = None
+                return ring
     return ring
 
 
@@ -439,6 +451,7 @@ def beamhardening(logfile, verbose=False):
                 bh = int(line.split('=')[1].strip())
                 if bh == 0:
                     bh = None
+                return bh
     return bh
 
 
@@ -453,6 +466,7 @@ def defectpixelmasking(logfile, verbose=False):
                 dpm = int(line.split('=')[1].strip())
                 if dpm == 0:
                     dpm = None
+                return dpm
     return dpm
 
 
@@ -465,26 +479,25 @@ def larger_than_fov(logfile, verbose=False):
                 if verbose:
                     print(line)
                 ltfov = line.split('=')[1].strip()
-    if ltfov == 'ON':
-        return True
-    elif ltfov == 'OFF':
-        return False
+                if ltfov == 'ON':
+                    return True
+                if ltfov == 'OFF':
+                    return False
+    return False
 
 
 def postalignment(logfile, verbose=False):
     """Read the postalignment value"""
-    pav = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'post alignment' in line:
                 if verbose:
                     print(line)
-                pav = float(line.split('=')[1].strip())
-    return pav
+                return float(line.split('=')[1].strip())
+    return None
 
 
 def reconstruction_grayvalue(logfile, which='Maximum', verbose=False):
-    grayvalue = None
     """
     How did we map the brightness of the reconstructions?
     Usually we read only the 'Maximum' value, but which='Minimum' is also possible.
@@ -494,8 +507,8 @@ def reconstruction_grayvalue(logfile, which='Maximum', verbose=False):
             if which + ' for CS to Image' in line:  # Either search for 'Maximum for CS to Image' or 'Minimum for CS to Image'
                 if verbose:
                     print(line)
-                grayvalue = float(line.split('=')[1])
-    return grayvalue
+                return float(line.split('=')[1])
+    return None
 
 
 def reconstruction_size(logfile, verbose=False):
@@ -512,55 +525,53 @@ def reconstruction_size(logfile, verbose=False):
                 if verbose:
                     print(line)
                 y = int(line.split('=')[1])
+            if x is not None and y is not None:
+                return (x, y)
     return (x, y)
 
 
 def reconstruction_rotation(logfile, verbose=False):
-    rotation = None
     """How did we rotate the reconstructions? (NRecons "CS Static Rotation (deg)" value)"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'CS Static Rotation Total' in line:
                 if verbose:
                     print(line)
-                rotation = float(line.split('=')[1])
-    return rotation
+                return float(line.split('=')[1])
+    return None
 
 
 def slice_first(logfile, verbose=False):
-    first = None
     """What's the first slice?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'First Section' in line:
                 if verbose:
                     print(line)
-                first = int(line.split('=')[1])
-    return first
+                return int(line.split('=')[1])
+    return None
 
 
 def slice_last(logfile, verbose=False):
-    last = None
     """What's the last slice?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Last Section' in line:
                 if verbose:
                     print(line)
-                last = int(line.split('=')[1])
-    return last
+                return int(line.split('=')[1])
+    return None
 
 
 def slice_number(logfile, verbose=False):
-    number = None
     """How many slices can we expect on disk?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Sections Count' in line:
                 if verbose:
                     print(line)
-                number = int(line.split('=')[1])
-    return number
+                return int(line.split('=')[1])
+    return None
 
 
 def region_of_interest(logfile, verbose=False):
@@ -597,7 +608,13 @@ def region_of_interest(logfile, verbose=False):
                 if verbose:
                     print(line)
                 right = int(line.split('=')[1])
+            if (
+                top is not False
+                and bottom is not False
+                and left is not False
+                and right is not False
+            ):
+                return (top, bottom, left, right)
     return (top, bottom, left, right)
-
 
 
