@@ -573,10 +573,10 @@ def region_of_interest(logfile, verbose=False):
     Did we reconstruct a ROI?
     If yes, give out its top, bottom, left and right coordinates.
     """
-    top = False
-    bottom = False
-    left = False
-    right = False
+    top = None
+    bottom = None
+    left = None
+    right = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Reconstruction from ROI' in line:
@@ -600,4 +600,6 @@ def region_of_interest(logfile, verbose=False):
                 if verbose:
                     print(line)
                 right = int(line.split('=')[1])
+            if None not in (top, bottom, left, right):
+                return (top, bottom, left, right)
     return (top, bottom, left, right)
