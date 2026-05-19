@@ -225,6 +225,7 @@ def projection_size(logfile):
                 x = int(line.split('=')[1])
                 if y is not None:
                     return (x, y)
+    return None
 
 
 def rotationstep(logfile, verbose=False):
@@ -249,6 +250,7 @@ def pixelsize(logfile, verbose=False, rounded=False):
                 if rounded:
                     return round(pxlsz, 2)
                 return pxlsz
+    return None
 
 
 def stacks(logfile, verbose=False):
@@ -414,6 +416,7 @@ def scandate(logfile, verbose=False):
                 if verbose:
                     print(f'Parsed to: {date}')
                 return date
+    return None
 
 
 # How did we reconstruct the scan?
@@ -444,6 +447,7 @@ def ringremoval(logfile, verbose=False):
                 if verbose:
                     print(line)
                 return int(line.split('=')[1].strip()) or None
+    return None
 
 
 def beamhardening(logfile, verbose=False):
@@ -455,6 +459,7 @@ def beamhardening(logfile, verbose=False):
                 if verbose:
                     print(line)
                 return int(line.split('=')[1].strip()) or None
+    return None
 
 
 def defectpixelmasking(logfile, verbose=False):
@@ -467,6 +472,7 @@ def defectpixelmasking(logfile, verbose=False):
                 # Return found value OR None if the value is 0
                 # Also return None if the line is not found
                 return int(line.split('=')[1].strip()) or None
+    return None
 
 
 def larger_than_fov(logfile, verbose=False):
@@ -478,6 +484,7 @@ def larger_than_fov(logfile, verbose=False):
                     print(line)
                 # Checks if the line says 'ON', and then returns True, otherwise False
                 return line.split('=')[1].strip() == 'ON'
+    return None
 
 
 def postalignment(logfile, verbose=False):
@@ -543,6 +550,7 @@ def slice_first(logfile, verbose=False):
                 if verbose:
                     print(line)
                 return int(line.split('=')[1])
+    return None
 
 
 def slice_last(logfile, verbose=False):
@@ -553,6 +561,7 @@ def slice_last(logfile, verbose=False):
                 if verbose:
                     print(line)
                 return int(line.split('=')[1])
+    return None
 
 
 def slice_number(logfile, verbose=False):
@@ -563,6 +572,7 @@ def slice_number(logfile, verbose=False):
                 if verbose:
                     print(line)
                 return int(line.split('=')[1])
+    return None
 
 
 def region_of_interest(logfile, verbose=False):
