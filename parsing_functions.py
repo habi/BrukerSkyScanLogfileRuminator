@@ -580,33 +580,28 @@ def region_of_interest(logfile, verbose=False):
     Did we reconstruct a ROI?
     If yes, give out its top, bottom, left and right coordinates.
     """
-    top = None
-    bottom = None
-    left = None
-    right = None
+    roi = {
+        'Top': None,
+        'Bottom': None,
+        'Left': None,
+        'Right': None,
+    }
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Reconstruction from ROI' in line:
                 if verbose:
                     print(line)
-                if line.split('=')[1].strip() == 'OFF':
+                if line.split('=', 1)[1].strip() == 'OFF':
                     return False
-            elif 'ROI' in line and 'Top' in line:
-                if verbose:
-                    print(line)
-                top = int(line.split('=')[1])
-            elif 'ROI' in line and 'Bottom' in line:
-                if verbose:
-                    print(line)
-                bottom = int(line.split('=')[1])
-            elif 'ROI' in line and 'Left' in line:
-                if verbose:
-                    print(line)
-                left = int(line.split('=')[1])
-            elif 'ROI' in line and 'Right' in line:
-                if verbose:
-                    print(line)
-                right = int(line.split('=')[1])
-            if None not in (top, bottom, left, right):
-                return (top, bottom, left, right)
-    return (top, bottom, left, right)
+                continue
+            if 'ROI' not in line:
+                continue
+            for key in roi:
+                if key in line:
+                    if verbose:
+                        print(line)
+                    roi[key] = int(line.split('=', 1)[1])
+                    break
+            if None not in roi.values():
+                return (roi['Top'], roi['Bottom'], roi['Left'], roi['Right'])
+    return (roi['Top'], roi['Bottom'], roi['Left'], roi['Right'])
