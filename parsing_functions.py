@@ -1,8 +1,8 @@
-# MIT License – No Military Use
-# Copyright (c) 2026 David Haberthür
-# Permission granted for any use except military applications.
+"""
+Parse relevant metadata from Bruker X-ray MicroCT machine log files.
 
-"""Functions to read the relevant data from Bruker X-ray MicroCT machine log files."""
+License details are provided in the repository LICENSE file.
+"""
 
 import re
 import datetime
@@ -192,7 +192,7 @@ def distance_source_to_detector(logfile, verbose=False):
 
 
 def distance_source_to_sample(logfile, verbose=False):
-    ""
+    """What's the distance from the X-ray source to the sample?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Object to Source' in line:
@@ -512,11 +512,11 @@ def postalignment(logfile, verbose=False):
 
 
 def reconstruction_grayvalue(logfile, which='Maximum', verbose=False):
-    grayvalue = None
     """
     How did we map the brightness of the reconstructions?
     Usually we read only the 'Maximum' value, but which='Minimum' is also possible.
     """
+    grayvalue = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             # Either search for 'Maximum for CS to Image' or 'Minimum for CS to Image'
