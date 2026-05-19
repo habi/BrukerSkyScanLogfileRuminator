@@ -97,8 +97,7 @@ def voltage(logfile, verbose=False):
             if 'Voltage' in line:
                 if verbose:
                     print(line)
-                voltage = float(line.split('=')[1])
-                return voltage
+                return float(line.split('=')[1])
     return None
 
 
@@ -109,8 +108,7 @@ def current(logfile, verbose=False):
             if 'Source Current' in line:
                 if verbose:
                     print(line)
-                current = float(line.split('=')[1])
-                return current
+                return float(line.split('=')[1])
     return None
 
 def power(logfile, verbose=False):
@@ -120,8 +118,7 @@ def power(logfile, verbose=False):
             if 'Source Target Power' in line:
                 if verbose:
                     print(line)
-                pwr = float(line.split('=')[1])
-                return pwr
+                return float(line.split('=')[1])
     return None
 
 
@@ -132,8 +129,7 @@ def spotsize(logfile, verbose=False):
             if 'Source spot size' in line:
                 if verbose:
                     print(line)
-                whichspotsize = line.split('=')[1].strip()
-                return whichspotsize
+                return line.split('=')[1].strip()
     return None
 
 
@@ -144,8 +140,7 @@ def beamposition(logfile, verbose=False):
             if 'Beam position' in line:
                 if verbose:
                     print(line)
-                position = int(line.split('=')[1])
-                return position
+                return int(line.split('=')[1])
     return None
 
 
@@ -169,8 +164,7 @@ def camera(logfile, verbose=False):
             if 'Camera T' in line or 'Camera=' in line:
                 if verbose:
                     print(line)
-                cam = line.split('=')[1].strip().strip(' camera')
-                return cam
+                return line.split('=')[1].strip().strip(' camera')
     return None
 
 def cameraposition(logfile, verbose=False):
@@ -180,8 +174,7 @@ def cameraposition(logfile, verbose=False):
             if 'Camera' in line and 'osition=' in line:
                 if verbose:
                     print(line)
-                camposition = line.split('=')[1].strip()
-                return camposition
+                return line.split('=')[1].strip()
     return None
 
 def distance_source_to_detector(logfile, verbose=False):
@@ -191,8 +184,7 @@ def distance_source_to_detector(logfile, verbose=False):
             if 'Camera to Source' in line:
                 if verbose:
                     print(line)
-                sdd = line.split('=')[1].strip()
-                return sdd
+                return line.split('=')[1].strip()
     return None
 
 def distance_source_to_sample(logfile, verbose=False):
@@ -202,8 +194,7 @@ def distance_source_to_sample(logfile, verbose=False):
             if 'Object to Source' in line:
                 if verbose:
                     print(line)
-                ssd = line.split('=')[1].strip()
-                return ssd
+                return line.split('=')[1].strip()
     return None
 
 
@@ -216,8 +207,7 @@ def numproj(logfile, verbose=False):
             if 'Number' in line and 'f Files' in line:
                 if verbose:
                     print(line)
-                numberofprojections = int(line.split('=')[1])
-                return numberofprojections
+                return int(line.split('=')[1])
     return None
 
 
@@ -244,8 +234,7 @@ def rotationstep(logfile, verbose=False):
             if 'Rotation Step' in line:
                 if verbose:
                     print(line)
-                rotstep = float(line.split('=')[1])
-                return rotstep
+                return float(line.split('=')[1])
     return None
 
 
@@ -299,10 +288,9 @@ def threesixtyscan(logfile, verbose=False):
                     print(line)
                 threesixty = line.split('=')[1]
                 if 'YES' in threesixty:
-                    threesixty = True
+                    return True
                 elif 'NO' in threesixty:
-                    threesixty = False
-                return threesixty
+                    return False
     return None
 
 
@@ -328,9 +316,9 @@ def exposuretime(logfile, verbose=False):
             if 'Exposure' in line:
                 if verbose:
                     print(line)
-                exp = int(line.split('=')[1])
-                return exp
+                return int(line.split('=')[1])
     return None
+
 
 def averaging(logfile, verbose=False):
     """Did we do averaging? If yes, how many frames did we average?"""
