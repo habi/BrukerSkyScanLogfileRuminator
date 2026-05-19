@@ -49,7 +49,7 @@ def scanner(logfile, verbose=False):
                 hardwareversion = line.split('=')[1].strip()
                 break
     if hardwareversion:
-        return 'SkyScan %s (Version %s)' % (machine, hardwareversion)
+        return f'SkyScan {machine} (Version {hardwareversion})'
     if 'Poseidon' in machine:
         return machine
     return 'SkyScan ' + machine
@@ -402,10 +402,10 @@ def scandate(logfile, verbose=False):
         for line in f:
             if 'Study Date and Time' in line:
                 if verbose:
-                    print('Found "date" line: %s' % line.strip())
+                    print(f'Found "date" line: {line.strip()}')
                 datestring = line.split('=')[1].strip().replace('  ', ' ')
                 if verbose:
-                    print('The date string is: %s' % datestring)
+                    print(f'The date string is: {datestring}')
                 try:
                     # Try to read explicitly
                     date = pandas.to_datetime(datestring, format='%d %b %Y %Hh:%Mm:%Ss')
@@ -413,7 +413,7 @@ def scandate(logfile, verbose=False):
                     # If we fail, try to figure it out automatically
                     date = pandas.to_datetime(datestring)
                 if verbose:
-                    print('Parsed to: %s' % date)
+                    print(f'Parsed to: {date}')
                 return date
 
 
