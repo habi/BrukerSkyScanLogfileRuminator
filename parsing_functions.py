@@ -45,6 +45,8 @@ def scanner(logfile, verbose=False):
                 hardwareversion = line.split('=')[1].strip()
             if machine is not None and hardwareversion:
                 return 'SkyScan %s (Version %s)' % (machine, hardwareversion)
+    if machine is None:
+        return None
     if hardwareversion:
         return 'SkyScan %s (Version %s)' % (machine, hardwareversion)
     else:
@@ -481,7 +483,7 @@ def larger_than_fov(logfile, verbose=False):
                 ltfov = line.split('=')[1].strip()
                 if ltfov == 'ON':
                     return True
-                if ltfov == 'OFF':
+                elif ltfov == 'OFF':
                     return False
     return False
 
@@ -512,9 +514,9 @@ def reconstruction_grayvalue(logfile, which='Maximum', verbose=False):
 
 
 def reconstruction_size(logfile, verbose=False):
+    """How large are the resulting reconstructions?"""
     x = None
     y = None
-    """How large are the resulting reconstructions?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Result' in line and 'Width' in line:
@@ -616,5 +618,4 @@ def region_of_interest(logfile, verbose=False):
             ):
                 return (top, bottom, left, right)
     return (top, bottom, left, right)
-
 
