@@ -465,7 +465,8 @@ def defectpixelmasking(logfile, verbose=False):
             if 'defect pixel mask' in line:
                 if verbose:
                     print(line)
-                # Return found value OR None if the value is 0 (i.e. if we didn't set defect pixel masking)
+                # Return found value OR None if the value is 0
+                # Also return None if the line is not found
                 return int(line.split('=')[1].strip()) or None
 
 
