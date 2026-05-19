@@ -298,7 +298,7 @@ def threesixtyscan(logfile, verbose=False):
 def highaspectratio(logfile, verbose=False):
     """Did we do a 'High Aspect Ratio' scan?"""
     hart = False
-    with open(logfile, 'r') as f:
+    with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'High Aspect Ratio' in line:
                 if verbose:
