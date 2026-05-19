@@ -248,8 +248,7 @@ def pixelsize(logfile, verbose=False, rounded=False):
                 pxlsz = float(line.split('=')[1])
                 if rounded:
                     return round(pxlsz, 2)
-                else:
-                    return pxlsz
+                return pxlsz
 
 
 def stacks(logfile, verbose=False):
@@ -289,7 +288,7 @@ def threesixtyscan(logfile, verbose=False):
                 threesixty = line.split('=')[1]
                 if 'YES' in threesixty:
                     return True
-                elif 'NO' in threesixty:
+                if 'NO' in threesixty:
                     return False
     return None
 
@@ -304,7 +303,7 @@ def highaspectratio(logfile, verbose=False):
                 hart = line.split('=')[1]
                 if 'YES' in hart:
                     return True
-                elif 'NO' in hart:
+                if 'NO' in hart:
                     return False
     return None
 
