@@ -9,5 +9,4 @@ jobs:
       - uses: actions/checkout@v6
       - uses: psf/black@stable
         with:
-            options: "--check --skip-string-normalization"
-            jupyter: true
+            options: "--skip-string-normalization"
