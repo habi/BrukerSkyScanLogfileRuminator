@@ -1,5 +1,8 @@
+# Parser for Bruker X-ray MicroCT machine log files
+
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/habi/BrukerSkyScanLogfileRuminator/HEAD?labpath=LogfileRuminator.ipynb)
 [![DOI](https://zenodo.org/badge/622975902.svg)](https://doi.org/10.5281/zenodo.15607943)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 This repository contains a Jupyter notebook and some supporting files I reuse often.
 I work with tomographic data acquired with three different [Bruker SkyScan](https://www.bruker.com/en/products-and-solutions/preclinical-imaging/micro-ct.html) (1172, 1272 and 2214).
@@ -11,7 +14,42 @@ An example of such a table is shown in [ScanningDetails.csv](ScanningDetails.csv
 *Very* often, the code is adapted from what is shown here, but this is a common baseline I always use.
 The repository contains a `logfiles` subfolder with some examples of log files and is set up in a way that it can be run in Binder, just click the link button at the top.
 
-Usually, I just add the repository to my other repositories as submodule with 
+Usually, I just add the repository to my other repositories as submodule with
+
 ````bash
 git submodule add https://github.com/habi/BrukerSkyScanLogfileRuminator
+````
+
+And then use
+
+````python
+import BrukerSkyScanLogfileRuminator.parsing_functions as logparse
+````
+
+to import the functions in my scripts.
+
+Then you set up a folder in which you want to look for all the relevant log files with
+
+````python
+if 'Linux' in platform.system():
+    BasePath = os.path.join(os.path.sep, 'Mount')
+elif 'Windows' in platform.system():
+    BasePath = os.path.join('M:', os.path.sep)
+Root = os.path.join(BasePath, 'SomeFolder', 'SomeProject')
+````
+
+And put the log files into a `pandas` dataframe with
+
+````python
+Data = pandas.DataFrame()
+Data['LogFile'] = [os.path.join(root, name)
+                   for root, dirs, files in os.walk(Root)
+                   for name in files
+                   if name.endswith((".log"))]
+````
+
+you can pull all the relevant data out of the log files with
+
+````python
+Data['Voxelsize'] = [logparse.pixelsize(log) for log in Data['LogFile']]
 ````

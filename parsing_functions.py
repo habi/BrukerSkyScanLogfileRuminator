@@ -1,3 +1,9 @@
+"""
+Parse relevant metadata from Bruker X-ray MicroCT machine log files.
+
+License details are provided in the repository LICENSE file.
+"""
+
 import re
 import datetime
 import pandas
@@ -9,10 +15,10 @@ def fulllog(logfile):
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             print(line.strip())
-    return ()
 
 
 def timeformat(tdelta, fmt):
+    """Helper to format the scan duration in a human-readable way"""
     # From https://stackoverflow.com/a/8907269/323100
     d = {"days": tdelta.days}
     d["hours"], rem = divmod(tdelta.seconds, 3600)
@@ -22,27 +28,34 @@ def timeformat(tdelta, fmt):
 
 # How is the machine set up in general?
 def scanner(logfile, verbose=False):
+    """What machine did we use? Also return hardware version for 1272"""
     machine = None
     hardwareversion = False
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
-            if 'Scanner' in line:
+            if 'Scanner=' in line:
                 if verbose:
                     print(line)
-                # Sometimes it's SkyScan, sometimes Skyscan
-                # We thus have to regex it :)
-                machine = re.split('Sky.can', line)[1].strip()
-            if 'Hardware' in line:
+                if 'Sky' in line:
+                    # Sometimes it's SkyScan, sometimes Skyscan
+                    # We thus have to regex it :)
+                    machine = re.split('Sky.can', line)[1].strip()
+                else:
+                    machine = line.split('=')[1].strip()
+            if 'Hardware' in line:  # Only for 1272
                 if verbose:
                     print(line)
                 hardwareversion = line.split('=')[1].strip()
+                break
     if hardwareversion:
-        return 'SkyScan %s (Version %s)' % (machine, hardwareversion)
-    else:
-        return 'SkyScan ' + machine
+        return f'SkyScan {machine} (Version {hardwareversion})'
+    if 'Poseidon' in machine:
+        return machine
+    return 'SkyScan ' + machine
 
 
 def controlsoftware(logfile, verbose=False):
+    """What control software did we use?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Software' in line and 'Version' in line:
@@ -53,69 +66,87 @@ def controlsoftware(logfile, verbose=False):
                 version = (
                     line.split('=')[1].strip().strip('Version ').replace(". ", ".")
                 )
-    return str(version)
+                return str(version)
+    return None
 
 
 def source(logfile, verbose=False):
+    """What X-ray source is in the machine?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Source Type' in line:
                 if verbose:
                     print(line)
-                whichsource = line.split('=')[1].strip()
-                if 'HAMAMA' in whichsource:
+                which_source = line.split('=')[1].strip()
+                if 'HAMAMA' in which_source:
                     # Split the string at '_L' to separate HAMAMATSU_L118
                     # Then capitalize HAMAMATSU and join the strings back
                     # with ' L' to get the beginning of the reference back
-                    whichsource = ' L'.join(
-                        [s.capitalize() for s in whichsource.split('_L')]
+                    which_source = ' L'.join(
+                        [s.capitalize() for s in which_source.split('_L')]
                     )
-    return whichsource
+                return which_source
+    return None
 
 
 # How did we set up the scan?
 def voltage(logfile, verbose=False):
+    """What voltage did we set the X-ray source to?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Voltage' in line:
                 if verbose:
                     print(line)
-                V = float(line.split('=')[1])
-    return V
+                return float(line.split('=')[1])
+    return None
 
 
 def current(logfile, verbose=False):
+    """What current did we set the X-ray source to?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Source Current' in line:
                 if verbose:
                     print(line)
-                A = float(line.split('=')[1])
-    return A
+                return float(line.split('=')[1])
+    return None
+
+
+def power(logfile, verbose=False):
+    """What's the resulting power of the X-ray source?"""
+    with open(logfile, 'r', encoding='utf-8') as f:
+        for line in f:
+            if 'Source Target Power' in line:
+                if verbose:
+                    print(line)
+                return float(line.split('=')[1])
+    return None
 
 
 def spotsize(logfile, verbose=False):
+    """What's the set spot size of the X-ray source?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Source spot size' in line:
                 if verbose:
                     print(line)
-                whichspotsize = line.split('=')[1].strip()
-    return whichspotsize
+                return line.split('=')[1].strip()
+    return None
 
 
 def beamposition(logfile, verbose=False):
-    position = None
+    """What's the beam position?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Beam position' in line:
                 if verbose:
                     print(line)
-                position = int(line.split('=')[1])
-    return position
+                return int(line.split('=')[1])
+    return None
 
 
 def whichfilter(logfile, verbose=False):
+    """Which filter did we use?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Filter=' in line:
@@ -124,47 +155,52 @@ def whichfilter(logfile, verbose=False):
                 fltr = line.split('=')[1].strip().replace('  ', ' ')
                 if fltr == 'No Filter':
                     fltr = None
-    return fltr
+                return fltr
+    return None
 
 
 def camera(logfile, verbose=False):
+    """What camera/detector is in the machine?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Camera T' in line or 'Camera=' in line:
                 if verbose:
                     print(line)
-                cam = line.split('=')[1].strip().strip(' camera')
-    return cam
+                return line.split('=')[1].strip().strip(' camera')
+    return None
 
 
 def cameraposition(logfile, verbose=False):
+    """What's the camera position?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Camera' in line and 'osition=' in line:
                 if verbose:
                     print(line)
-                camposition = line.split('=')[1].strip()
-    return camposition
+                return line.split('=')[1].strip()
+    return None
 
 
 def distance_source_to_detector(logfile, verbose=False):
+    """What's the distance from the X-ray source to the detector?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Camera to Source' in line:
                 if verbose:
                     print(line)
-                sdd = line.split('=')[1].strip()
-    return sdd
+                return line.split('=')[1].strip()
+    return None
 
 
 def distance_source_to_sample(logfile, verbose=False):
+    """What's the distance from the X-ray source to the sample?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Object to Source' in line:
                 if verbose:
                     print(line)
-                ssd = line.split('=')[1].strip()
-    return ssd
+                return line.split('=')[1].strip()
+    return None
 
 
 def numproj(logfile, verbose=False):
@@ -176,12 +212,14 @@ def numproj(logfile, verbose=False):
             if 'Number' in line and 'f Files' in line:
                 if verbose:
                     print(line)
-                numberofprojections = int(line.split('=')[1])
-    return numberofprojections
+                return int(line.split('=')[1])
+    return None
 
 
 def projection_size(logfile):
-    """How big did we set the camera?"""
+    """How big are the projections? E.g. did we set any binning?"""
+    x = None
+    y = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             # Sometimes it's 'Number of'
@@ -190,17 +228,20 @@ def projection_size(logfile):
                 y = int(line.split('=')[1])
             if 'Number' in line and 'f Columns' in line:
                 x = int(line.split('=')[1])
-    return (x, y)
+                if y is not None:
+                    return (x, y)
+    return None
 
 
 def rotationstep(logfile, verbose=False):
+    """What's the rotation step size?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Rotation Step' in line:
                 if verbose:
                     print(line)
-                rotstep = float(line.split('=')[1])
-    return rotstep
+                return float(line.split('=')[1])
+    return None
 
 
 def pixelsize(logfile, verbose=False, rounded=False):
@@ -210,30 +251,28 @@ def pixelsize(logfile, verbose=False, rounded=False):
             if 'Image Pixel' in line and 'Scaled' not in line:
                 if verbose:
                     print(line)
-                pixelsize = float(line.split('=')[1])
-    if rounded:
-        return round(pixelsize, 2)
-    else:
-        return pixelsize
+                pxlsz = float(line.split('=')[1])
+                if rounded:
+                    return round(pxlsz, 2)
+                return pxlsz
+    return None
 
 
 def stacks(logfile, verbose=False):
+    """How many stacks did we scan?"""
+    # If only one stack, then Bruker writes nothing to the log file
+    numstacks = 0
     with open(logfile, 'r', encoding='utf-8') as f:
-        # If only one stack, then Bruker writes nothing to the log file
-        numstacks = 0
         for line in f:
             if 'Sub-scan scan length' in line:
                 if verbose:
                     print(line)
-                # The 'Sub-scan scan length' is listed in the log file
-                # We simply select the last one, and add 1,
-                # since Bruker also starts to count at zero
                 numstacks = int(line.split('[')[1].split(']')[0])
     return numstacks + 1
 
 
 def overlapscan(logfile, verbose=False):
-    wide = False
+    """Did we do an overlap scan?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'orizontal' in line and 'ffset' in line and 'osition' in line:
@@ -242,10 +281,12 @@ def overlapscan(logfile, verbose=False):
                 wide = int(line.split('=')[1])
                 if wide == 1:
                     wide = False
-    return wide
+                return wide
+    return None
 
 
 def threesixtyscan(logfile, verbose=False):
+    """Did we do a 360° scan?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if '360 Rotation' in line:
@@ -253,23 +294,40 @@ def threesixtyscan(logfile, verbose=False):
                     print(line)
                 threesixty = line.split('=')[1]
                 if 'YES' in threesixty:
-                    threesixty = True
-                elif 'NO' in threesixty:
-                    threesixty = False
-    return threesixty
+                    return True
+                if 'NO' in threesixty:
+                    return False
+    return None
+
+
+def highaspectratio(logfile, verbose=False):
+    """Did we do a 'High Aspect Ratio' scan?"""
+    with open(logfile, 'r', encoding='utf-8') as f:
+        for line in f:
+            if 'High Aspect Ratio' in line:
+                if verbose:
+                    print(line)
+                hart = line.split('=')[1]
+                if 'YES' in hart:
+                    return True
+                if 'NO' in hart:
+                    return False
+    return None
 
 
 def exposuretime(logfile, verbose=False):
+    """What exposure time did we set?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Exposure' in line:
                 if verbose:
                     print(line)
-                exp = int(line.split('=')[1])
-    return exp
+                return int(line.split('=')[1])
+    return None
 
 
 def averaging(logfile, verbose=False):
+    """Did we do averaging? If yes, how many frames did we average?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Avera' in line:
@@ -281,10 +339,12 @@ def averaging(logfile, verbose=False):
                     avg = int(details[details.find("(") + 1 : details.find(")")])
                 else:
                     avg = None
-    return avg
+                return avg
+    return None
 
 
 def randommovement(logfile, verbose=False):
+    """Did we do a random movement scan?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Random' in line:
@@ -296,18 +356,23 @@ def randommovement(logfile, verbose=False):
                     rndm = int(details[details.find("(") + 1 : details.find(")")])
                 else:
                     rndm = None
-    return rndm
+                return rndm
+    return None
 
 
 def duration(logfile, prose=False, verbose=False):
-    '''Returns scan duration in *seconds*'''
+    """Returns scan duration in *seconds*"""
+    duration_log = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Scan duration' in line and 'Estimated' not in line:
                 if verbose:
                     print(line)
                 duration_log = line.split('=')[1].strip()
-    # Sometimes it's '00:24:26', sometimes '0h:52m:53s' :-/
+                break
+    if duration_log is None:
+        return None
+    # Sometimes it's '00:24:26', sometimes '0h:52m:53s'
     if 'h' in duration_log:
         # Thanks to ChatGPT for the help with Regex parsing and grouping
         pattern = r"(?:(\d+)h)(?::?(\d+)m)(?::?(\d+)s)"
@@ -327,15 +392,14 @@ def duration(logfile, prose=False, verbose=False):
     if prose:
         if verbose:
             print(time_delta)
-        # Return Timedelta object
-        # We can then split it with time_delta.components.hour, time_delta.components.minute, time_delta.components.seconds
+        # Return Timedelta object, which we can then split into components like
+        # time_delta.components.hour, time_delta.components.minute, time_delta.components.seconds
         # Hat tip to https://stackoverflow.com/a/71407740/323100
         return time_delta
-    else:
-        if verbose:
-            print(time_delta.total_seconds())
-        # Return the scan time in seconds
-        return time_delta.total_seconds()
+    if verbose:
+        print(time_delta.total_seconds())
+    # Return the scan time in seconds
+    return time_delta.total_seconds()
 
 
 def scandate(logfile, verbose=False):
@@ -344,10 +408,10 @@ def scandate(logfile, verbose=False):
         for line in f:
             if 'Study Date and Time' in line:
                 if verbose:
-                    print('Found "date" line: %s' % line.strip())
+                    print(f'Found "date" line: {line.strip()}')
                 datestring = line.split('=')[1].strip().replace('  ', ' ')
                 if verbose:
-                    print('The date string is: %s' % datestring)
+                    print(f'The date string is: {datestring}')
                 try:
                     # Try to read explicitly
                     date = pandas.to_datetime(datestring, format='%d %b %Y %Hh:%Mm:%Ss')
@@ -355,16 +419,16 @@ def scandate(logfile, verbose=False):
                     # If we fail, try to figure it out automatically
                     date = pandas.to_datetime(datestring)
                 if verbose:
-                    print('Parsed to: %s' % date)
-    return date
+                    print(f'Parsed to: {date}')
+                return date
+    return None
 
 
 # How did we reconstruct the scan?
 def nreconversion(logfile, verbose=False):
-    """Return reconstruction program an its version"""
-    # Is only written to log files if reconstructed, thus set empty first
-    program = None
-    version = None
+    """Return reconstruction program and its version"""
+    # Is only written to log files if reconstructed; returns (None, None) if absent
+    program = version = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Reconstruction Program' in line:
@@ -375,69 +439,36 @@ def nreconversion(logfile, verbose=False):
                 if verbose:
                     print(line)
                 version = line.split('sion:')[1].strip()
-    return (program, version)
+                break
+    return program, version
 
 
 def ringremoval(logfile, verbose=False):
     """Did we use ring removal?"""
-    # Is only written to log files if reconstructed, thus set empty first
-    ring = None
+    # Is only written to log files if reconstructed; returns None if absent or zero
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Ring' in line:
                 if verbose:
                     print(line)
-                ring = int(line.split('=')[1].strip())
-                if ring == 0:
-                    ring = None
-    return ring
+                return int(line.split('=')[1].strip()) or None
+    return None
 
 
 def beamhardening(logfile, verbose=False):
     """Did we set a beam hardening correction?"""
-    # Is only written to log files if reconstructed, thus set empty first
-    bh = None
+    # Is only written to log files if reconstructed; returns None if absent or zero
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'ardeni' in line:
                 if verbose:
                     print(line)
-                bh = int(line.split('=')[1].strip())
-                if bh == 0:
-                    bh = None
-    return bh
+                return int(line.split('=')[1].strip()) or None
+    return None
 
-
-def defectpixelmasking(logfile, verbose=False):
-    """Check the 'defect pixel masking' setting"""
-    dpm = None
-    with open(logfile, 'r', encoding='utf-8') as f:
-        for line in f:
-            if 'defect pixel mask' in line:
-                if verbose:
-                    print(line)
-                dpm = int(line.split('=')[1].strip())
-                if dpm == 0:
-                    dpm = None
-    return dpm
-
-
-def larger_than_fov(logfile, verbose=False):
-    """Did we set the 'object larger than field of view' option"""
-    ltfov = False
-    with open(logfile, 'r', encoding='utf-8') as f:
-        for line in f:
-            if 'Object Bigger' in line:
-                if verbose:
-                    print(line)
-                ltfov = line.split('=')[1].strip()
-    if ltfov == 'ON':
-        return True
-    elif ltfov == 'OFF':
-        return False
-
+ 
 def smoothing(logfile, verbose=False):
-    """Did we set the 'smoothing' option"""
+    """Did we set the 'smoothing' option?"""
     smoothing = False
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
@@ -445,40 +476,65 @@ def smoothing(logfile, verbose=False):
                 if verbose:
                     print(line)
                 smoothing = int(line.split('=')[1].strip())
-    return smoothing
+            return smoothing
+    return None
+
+
+def defectpixelmasking(logfile, verbose=False):
+    """Check the 'defect pixel masking' setting"""
+    with open(logfile, 'r', encoding='utf-8') as f:
+        for line in f:
+            if 'defect pixel mask' in line:
+                if verbose:
+                    print(line)
+                # Return found value OR None if the value is 0
+                # Also return None if the line is not found
+                return int(line.split('=')[1].strip()) or None
+    return None
+
+
+def larger_than_fov(logfile, verbose=False):
+    """Did we set the 'object larger than field of view' option"""
+    with open(logfile, 'r', encoding='utf-8') as f:
+        for line in f:
+            if 'Object Bigger' in line:
+                if verbose:
+                    print(line)
+                # Checks if the line says 'ON', and then returns True, otherwise False
+                return line.split('=')[1].strip() == 'ON'
+    return None
 
 
 def postalignment(logfile, verbose=False):
     """Read the postalignment value"""
-    pav = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'post alignment' in line:
                 if verbose:
                     print(line)
-                pav = float(line.split('=')[1].strip())
-    return pav
+                return float(line.split('=')[1].strip())
+    return None
 
 
 def reconstruction_grayvalue(logfile, which='Maximum', verbose=False):
-    grayvalue = None
     """
     How did we map the brightness of the reconstructions?
     Usually we read only the 'Maximum' value, but which='Minimum' is also possible.
     """
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
-            if which + ' for CS to Image' in line:  # Either search for 'Maximum for CS to Image' or 'Minimum for CS to Image'
+            # Either search for 'Maximum for CS to Image' or 'Minimum for CS to Image'
+            if which + ' for CS to Image' in line:
                 if verbose:
                     print(line)
-                grayvalue = float(line.split('=')[1])
-    return grayvalue
+                return float(line.split('=')[1])
+    return None
 
 
 def reconstruction_size(logfile, verbose=False):
+    """How large are the resulting reconstructions?"""
     x = None
     y = None
-    """How large are the resulting reconstructions?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Result' in line and 'Width' in line:
@@ -493,8 +549,8 @@ def reconstruction_size(logfile, verbose=False):
 
 
 def reconstruction_rotation(logfile, verbose=False):
-    rotation = None
     """How did we rotate the reconstructions? (NRecons "CS Static Rotation (deg)" value)"""
+    rotation = None
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'CS Static Rotation Total' in line:
@@ -505,39 +561,36 @@ def reconstruction_rotation(logfile, verbose=False):
 
 
 def slice_first(logfile, verbose=False):
-    first = None
     """What's the first slice?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'First Section' in line:
                 if verbose:
                     print(line)
-                first = int(line.split('=')[1])
-    return first
+                return int(line.split('=')[1])
+    return None
 
 
 def slice_last(logfile, verbose=False):
-    last = None
     """What's the last slice?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Last Section' in line:
                 if verbose:
                     print(line)
-                last = int(line.split('=')[1])
-    return last
+                return int(line.split('=')[1])
+    return None
 
 
 def slice_number(logfile, verbose=False):
-    number = None
     """How many slices can we expect on disk?"""
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Sections Count' in line:
                 if verbose:
                     print(line)
-                number = int(line.split('=')[1])
-    return number
+                return int(line.split('=')[1])
+    return None
 
 
 def region_of_interest(logfile, verbose=False):
@@ -545,33 +598,28 @@ def region_of_interest(logfile, verbose=False):
     Did we reconstruct a ROI?
     If yes, give out its top, bottom, left and right coordinates.
     """
-    top = False
-    bottom = False
-    left = False
-    right = False
+    roi = {
+        'Top': None,
+        'Bottom': None,
+        'Left': None,
+        'Right': None,
+    }
     with open(logfile, 'r', encoding='utf-8') as f:
         for line in f:
             if 'Reconstruction from ROI' in line:
                 if verbose:
                     print(line)
-                if line.split('=')[1].strip() == 'OFF':
+                if line.split('=', 1)[1].strip() == 'OFF':
                     return False
-                else:
-                    pass
-            elif 'ROI' in line and 'Top' in line:
-                if verbose:
-                    print(line)
-                top = int(line.split('=')[1])
-            elif 'ROI' in line and 'Bottom' in line:
-                if verbose:
-                    print(line)
-                bottom = int(line.split('=')[1])
-            elif 'ROI' in line and 'Left' in line:
-                if verbose:
-                    print(line)
-                left = int(line.split('=')[1])
-            elif 'ROI' in line and 'Right' in line:
-                if verbose:
-                    print(line)
-                right = int(line.split('=')[1])
-    return (top, bottom, left, right)
+                continue
+            if 'ROI' not in line:
+                continue
+            for key in roi:
+                if key in line:
+                    if verbose:
+                        print(line)
+                    roi[key] = int(line.split('=', 1)[1])
+                    break
+            if None not in roi.values():
+                return (roi['Top'], roi['Bottom'], roi['Left'], roi['Right'])
+    return (roi['Top'], roi['Bottom'], roi['Left'], roi['Right'])
