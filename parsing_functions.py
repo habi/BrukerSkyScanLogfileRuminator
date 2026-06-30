@@ -466,7 +466,7 @@ def beamhardening(logfile, verbose=False):
                 return int(line.split('=')[1].strip()) or None
     return None
 
- 
+
 def smoothing(logfile, verbose=False):
     """Did we set the 'smoothing' option?"""
     smoothing = False
