@@ -466,6 +466,19 @@ def beamhardening(logfile, verbose=False):
                 return int(line.split('=')[1].strip()) or None
     return None
 
+ 
+def smoothing(logfile, verbose=False):
+    """Did we set the 'smoothing' option?"""
+    smoothing = False
+    with open(logfile, 'r', encoding='utf-8') as f:
+        for line in f:
+            if 'Smoothing=' in line:
+                if verbose:
+                    print(line)
+                smoothing = int(line.split('=')[1].strip())
+            return smoothing
+    return None
+
 
 def defectpixelmasking(logfile, verbose=False):
     """Check the 'defect pixel masking' setting"""
