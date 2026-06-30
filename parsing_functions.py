@@ -436,6 +436,17 @@ def larger_than_fov(logfile, verbose=False):
     elif ltfov == 'OFF':
         return False
 
+def smoothing(logfile, verbose=False):
+    """Did we set the 'smoothing' option"""
+    smoothing = False
+    with open(logfile, 'r', encoding='utf-8') as f:
+        for line in f:
+            if 'Smoothing=' in line:
+                if verbose:
+                    print(line)
+                smoothing = int(line.split('=')[1].strip())
+    return smoothing
+
 
 def postalignment(logfile, verbose=False):
     """Read the postalignment value"""
